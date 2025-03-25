@@ -1,13 +1,10 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-  schemas   = ["auth", "public"]
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Workspace {
@@ -24,7 +21,6 @@ model Workspace {
   folders        Folder[]
 
   @@map("workspace")
-  @@schema("public")
 }
 
 model Folder {
@@ -40,5 +36,4 @@ model Folder {
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@map("folders")
-  @@schema("public")
 }
