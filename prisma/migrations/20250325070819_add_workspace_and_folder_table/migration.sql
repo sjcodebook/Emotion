@@ -1,3 +1,6 @@
+-- Enable UUID extension first
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- CreateTable
 CREATE TABLE "workspace" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
