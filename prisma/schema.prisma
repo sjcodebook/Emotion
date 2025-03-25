@@ -1,17 +1,19 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  schemas   = ["auth", "public"]
 }
 
 model Workspace {
   id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp
-  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamp
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
   workspaceOwner String   @map("workspace_owner") @db.Uuid
   title          String   @map("title")
   iconId         String   @map("icon_id") @db.Uuid
@@ -22,12 +24,13 @@ model Workspace {
   folders        Folder[]
 
   @@map("workspace")
+  @@schema("public")
 }
 
 model Folder {
   id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamp
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamp(6)
   title       String    @map("title")
   iconId      String    @map("icon_id") @db.Uuid
   data        String?   @map("data")
@@ -37,4 +40,5 @@ model Folder {
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@map("folders")
+  @@schema("public")
 }

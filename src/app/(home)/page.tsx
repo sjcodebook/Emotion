@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma'
 
 export default async function Home() {
-  const users = await prisma.user.findMany()
+  const users = await prisma.workspace.findMany()
 
   console.log(users)
 
@@ -13,7 +13,7 @@ export default async function Home() {
       <ol className='list-decimal list-inside font-[family-name:var(--font-geist-sans)] text-[#333333]'>
         {users.map((user) => (
           <li key={user.id} className='mb-2'>
-            {user.name}
+            {user.iconId}
           </li>
         ))}
       </ol>
