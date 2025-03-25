@@ -8,18 +8,17 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
-}
+model Workspace {
+  id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamp
+  workspaceOwner String   @map("workspace_owner") @db.Uuid
+  title          String   @map("title")
+  iconId         String   @map("icon_id") @db.Uuid
+  data           String?  @map("data")
+  inTrash        String?  @map("in_trash")
+  logo           String?  @map("logo")
+  bannerUrl      String?  @map("banner_url")
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id])
+  @@map("workspace")
 }
