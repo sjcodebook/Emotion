@@ -19,6 +19,22 @@ model Workspace {
   inTrash        String?  @map("in_trash")
   logo           String?  @map("logo")
   bannerUrl      String?  @map("banner_url")
+  folders        Folder[]
 
   @@map("workspace")
+}
+
+model Folder {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamp
+  title       String    @map("title")
+  iconId      String    @map("icon_id") @db.Uuid
+  data        String?   @map("data")
+  inTrash     String?   @map("in_trash")
+  bannerUrl   String?   @map("banner_url")
+  workspaceId String    @db.Uuid
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("folders")
 }
