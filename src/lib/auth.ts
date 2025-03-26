@@ -1,8 +1,12 @@
 import NextAuth from 'next-auth'
+import { ZodError } from 'zod'
 import Credentials from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 
 import prisma from '@/lib/prisma'
+import { signInSchema } from '@/lib/zod'
+
+import { getUserProfileByEmailUseCase, verifyUserPasswordUseCase } from '@/use-cases/users'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -13,22 +17,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: {},
       },
       authorize: async (credentials) => {
-        let user = null
+        try {
+          const { email, password } = await signInSchema.parseAsync(credentials)
 
-        // logic to salt and hash password
-        const pwHash = saltAndHashPassword(credentials.password)
+          // Check if the user exists in the database
+          const user = await getUserProfileByEmailUseCase(email)
 
-        // logic to verify if the user exists
-        user = await getUserFromDb(credentials.email, pwHash)
+          if (!user) {
+            throw new Error('User not found.')
+          }
 
-        if (!user) {
-          // No user found, so this is their first attempt to login
-          // Optionally, this is also the place you could do a user registration
-          throw new Error('Invalid credentials.')
+          // Check if the password is correct
+          const isPasswordCorrect = await verifyUserPasswordUseCase(user.id, password)
+
+          if (!isPasswordCorrect) {
+            throw new Error('Password is incorrect.')
+          }
+
+          // Return the user object
+          return user
+        } catch (error) {
+          if (error instanceof ZodError) {
+            return new Error('Invalid credentials')
+          }
+          return new Error(error instanceof Error ? error.message : 'An unknown error occurred')
         }
-
-        // return user object with their profile data
-        return user
       },
     }),
   ],

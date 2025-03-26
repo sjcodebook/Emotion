@@ -7,6 +7,7 @@ export const env = createEnv({
     NODE_ENV: z.string().optional(),
     AUTH_SECRET: z.string().min(1),
     HOST_NAME: z.string().min(1),
+    HASH_SALT: z.string().min(1),
   },
   client: {},
   runtimeEnv: {
@@ -14,5 +15,6 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     AUTH_SECRET: process.env.AUTH_SECRET,
     HOST_NAME: process.env.HOST_NAME,
+    HASH_SALT: process.env.HASH_SALT,
   },
 })
