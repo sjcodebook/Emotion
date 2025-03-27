@@ -1,5 +1,6 @@
 import { getProfileByEmail, getProfileByUserId } from '@/data-access/users'
 import { hashPassword } from '@/lib/utils'
+// import { signIn } from '@/lib/auth'
 import { env } from '@/env'
 
 export async function getUserProfileByEmailUseCase(email: string) {
