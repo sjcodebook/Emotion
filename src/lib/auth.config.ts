@@ -1,5 +1,7 @@
 import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
 
+import { env } from '@/env'
 import { signInSchema } from '@/lib/zod'
 import { getUserProfileByEmailUseCase, verifyUserPasswordUseCase } from '@/use-cases/users'
 
@@ -7,6 +9,10 @@ import type { NextAuthConfig } from 'next-auth'
 
 export default {
   providers: [
+    Google({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    }),
     Credentials({
       credentials: {
         email: {},
