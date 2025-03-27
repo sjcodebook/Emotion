@@ -19,3 +19,15 @@ export async function getProfileByUserId(userId: string) {
 
   return profile
 }
+
+export async function createUser(name: string, email: string, hashedPassword: string) {
+  const profile = await db.user.create({
+    data: {
+      name,
+      email,
+      hashedPassword,
+    },
+  })
+
+  return profile
+}
