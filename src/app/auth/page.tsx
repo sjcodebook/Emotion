@@ -1,9 +1,12 @@
+import { useEffect } from 'react'
+import { redirect } from 'next/navigation'
+
 const Auth = () => {
-  return (
-    <div>
-      <h1>Auth Page</h1>
-    </div>
-  )
+  useEffect(() => {
+    redirect('/auth/login')
+  }, [])
+
+  return null
 }
 
 export default Auth
