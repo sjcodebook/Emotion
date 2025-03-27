@@ -79,6 +79,11 @@ const LoginForm = ({ className, ...props }: React.ComponentPropsWithoutRef<'div'
                     placeholder='m@example.com'
                     required
                   />
+                  {errors.email && errors.email.message && (
+                    <div className='bg-red-100 p-2 rounded-sm'>
+                      <div className='text-sm text-red-500'>{errors.email.message}</div>
+                    </div>
+                  )}
                 </div>
                 <div className='grid gap-2'>
                   <div className='flex items-center'>
@@ -88,6 +93,11 @@ const LoginForm = ({ className, ...props }: React.ComponentPropsWithoutRef<'div'
                     </a>
                   </div>
                   <Input {...register('password')} id='password' type='password' required />
+                  {errors.password && errors.password.message && (
+                    <div className='bg-red-100 p-2 rounded-sm'>
+                      <div className='text-sm text-red-500'>{errors.password.message}</div>
+                    </div>
+                  )}
                 </div>
                 {errors.root && errors.root.message && (
                   <div className='bg-red-100 p-2 rounded-sm'>
