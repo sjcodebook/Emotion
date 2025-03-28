@@ -1,22 +1,22 @@
+import Image from 'next/image'
+
 import { auth } from '@/lib/auth'
+import { Button } from '@/components/ui/button'
+import { PlusCircle } from 'lucide-react'
 
-import SignOut from '@/components/sign-out'
-
-const Landing = async () => {
+const Dashboard = async () => {
   const session = await auth()
 
   return (
-    <div className='min-h-full flex flex-col'>
-      {/* <div className='flex flex-col items-center justify-center md:justify-start text-center gap-y-8 flex-1 px-6 pb-10'>
-        <Heading />
-      </div> */}
-      <h1>{session ? JSON.stringify(session) : ''}</h1>
-
-      <SignOut />
-
-      {console.log(session)}
+    <div className='h-full flex flex-col items-center justify-center space-y-4'>
+      <Image src='/image/empty.webp' height='300' width='300' alt='Empty' />
+      <h2 className='text-lg font-medium'>Welcome to {session?.user?.name}&apos;s dashboard</h2>
+      <Button>
+        <PlusCircle className='h-4 w-4 mr-1' />
+        Create a new document
+      </Button>
     </div>
   )
 }
 
-export default Landing
+export default Dashboard
