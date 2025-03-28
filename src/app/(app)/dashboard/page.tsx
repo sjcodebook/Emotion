@@ -9,7 +9,7 @@ const Dashboard = async () => {
 
   return (
     <div className='h-full flex flex-col items-center justify-center space-y-4'>
-      <Image src='/image/empty.webp' height='300' width='300' alt='Empty' />
+      <Image src='/assets/image/empty.webp' height='300' width='300' alt='Empty' />
       <h2 className='text-lg font-medium'>Welcome to {session?.user?.name}&apos;s dashboard</h2>
       <Button>
         <PlusCircle className='h-4 w-4 mr-1' />

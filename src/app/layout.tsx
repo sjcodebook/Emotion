@@ -4,6 +4,7 @@ import './globals.css'
 
 import { ThemeProvider } from '@/providers/theme-provider'
 import ReactQueryProvider from '@/providers/react-query'
+import SessionProvider from '@/providers/session-provider'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,7 +30,9 @@ export default function RootLayout({
           defaultTheme='light'
           enableSystem
           disableTransitionOnChange>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <SessionProvider>
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
