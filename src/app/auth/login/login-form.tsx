@@ -6,7 +6,7 @@ import z from 'zod'
 import { useServerAction } from 'zsa-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { signInSchema } from '@/lib/zod'
+import { signInSchema } from '@/zod-schemas/users'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'

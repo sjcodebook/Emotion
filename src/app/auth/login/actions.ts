@@ -4,7 +4,7 @@ import { AuthError } from 'next-auth'
 
 import { unauthenticatedAction } from '@/lib/safe-action'
 import { signIn } from '@/lib/auth'
-import { signInSchema } from '@/lib/zod'
+import { signInSchema } from '@/zod-schemas/users'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { getUserProfileByEmailUseCase } from '@/use-cases/users'
 

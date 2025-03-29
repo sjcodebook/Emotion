@@ -4,7 +4,7 @@ import { AuthError } from 'next-auth'
 
 import { unauthenticatedAction } from '@/lib/safe-action'
 import { signIn } from '@/lib/auth'
-import { signUpSchema } from '@/lib/zod'
+import { signUpSchema } from '@/zod-schemas/users'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { getUserProfileByEmailUseCase, createUserUseCase } from '@/use-cases/users'
 
@@ -17,7 +17,7 @@ export const signUpAction = unauthenticatedAction
       if (user) {
         return { error: 'User already exists. Please login.' }
       }
-      await createUserUseCase(input.name, input.email, input.password)
+      await createUserUseCase({ name: input.name, email: input.email, password: input.password })
       await signIn('credentials', {
         email: input.email,
         password: input.password,

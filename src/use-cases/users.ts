@@ -7,7 +7,13 @@ export async function getUserProfileByEmailUseCase(email: string) {
   return profile
 }
 
-export async function verifyUserPasswordUseCase(userId: string, password: string) {
+export async function verifyUserPasswordUseCase({
+  userId,
+  password,
+}: {
+  userId: string
+  password: string
+}) {
   if (!userId || !password) {
     return false
   }
@@ -20,11 +26,19 @@ export async function verifyUserPasswordUseCase(userId: string, password: string
   return profile.hashedPassword === pwHash
 }
 
-export async function createUserUseCase(name: string, email: string, password: string) {
+export async function createUserUseCase({
+  name,
+  email,
+  password,
+}: {
+  name: string
+  email: string
+  password: string
+}) {
   const pwHash = await hashPassword(password, env.HASH_SALT)
   const profile = await getProfileByEmail(email)
   if (profile) {
     return { error: 'User already exists. Please login.' }
   }
-  return await createUser(name, email, pwHash)
+  return await createUser({ name, email, hashedPassword: pwHash })
 }

@@ -35,7 +35,7 @@ export default function RootLayout({
           <SessionProvider>
             <ReactQueryProvider>
               {children}
-              <Toaster />
+              <Toaster richColors />
             </ReactQueryProvider>
           </SessionProvider>
         </ThemeProvider>
