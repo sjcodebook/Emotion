@@ -1,9 +1,9 @@
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
 import { setupServerActionHooks, createServerActionsKeyFactory } from 'zsa-react-query'
 
-export const QueryKeyFactory = createServerActionsKeyFactory({
-  getCurrentUserDocumentsAction: () => ['getCurrentUserDocumentsAction'],
-})
+import { queryKeys } from '@/lib/query-keys'
+
+export const QueryKeyFactory = createServerActionsKeyFactory(queryKeys)
 
 const { useServerActionQuery, useServerActionMutation, useServerActionInfiniteQuery } =
   setupServerActionHooks({
