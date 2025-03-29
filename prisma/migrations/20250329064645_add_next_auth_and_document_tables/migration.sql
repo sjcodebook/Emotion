@@ -6,6 +6,7 @@ CREATE TABLE "users" (
     "name" TEXT,
     "email" TEXT NOT NULL,
     "email_verified" TIMESTAMP(3),
+    "hashed_password" TEXT,
     "image" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -51,34 +52,20 @@ CREATE TABLE "verification_tokens" (
 );
 
 -- CreateTable
-CREATE TABLE "workspaces" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
-    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(6) NOT NULL,
-    "workspace_owner_id" UUID NOT NULL,
-    "title" TEXT NOT NULL,
-    "icon_id" UUID NOT NULL,
-    "data" TEXT,
-    "in_trash" TEXT,
-    "logo" TEXT,
-    "banner_url" TEXT,
-
-    CONSTRAINT "workspaces_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "folders" (
+CREATE TABLE "documents" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) NOT NULL,
     "title" TEXT NOT NULL,
-    "icon_id" UUID NOT NULL,
-    "data" TEXT,
-    "in_trash" TEXT,
-    "banner_url" TEXT,
-    "workspaceId" UUID NOT NULL,
+    "user_id" UUID NOT NULL,
+    "is_archived" BOOLEAN NOT NULL DEFAULT false,
+    "parent_document_id" TEXT,
+    "content" TEXT,
+    "cover_image" TEXT,
+    "icon" TEXT,
+    "is_published" BOOLEAN NOT NULL DEFAULT false,
 
-    CONSTRAINT "folders_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "documents_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -94,7 +81,4 @@ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "workspaces" ADD CONSTRAINT "workspaces_workspace_owner_id_fkey" FOREIGN KEY ("workspace_owner_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "folders" ADD CONSTRAINT "folders_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "documents" ADD CONSTRAINT "documents_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

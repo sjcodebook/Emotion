@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
+import { Toaster } from '@/components/ui/sonner'
+
 import { ThemeProvider } from '@/providers/theme-provider'
 import ReactQueryProvider from '@/providers/react-query'
 import SessionProvider from '@/providers/session-provider'
@@ -31,7 +33,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange>
           <SessionProvider>
-            <ReactQueryProvider>{children}</ReactQueryProvider>
+            <ReactQueryProvider>
+              {children}
+              <Toaster />
+            </ReactQueryProvider>
           </SessionProvider>
         </ThemeProvider>
       </body>

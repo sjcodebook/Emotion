@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id             String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id             String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name           String?
-  email          String      @unique
-  emailVerified  DateTime?   @map("email_verified")
-  hashedPassword String?     @map("hashed_password")
+  email          String     @unique
+  emailVerified  DateTime?  @map("email_verified")
+  hashedPassword String?    @map("hashed_password")
   image          String?
-  createdAt      DateTime    @default(now()) @map("created_at")
-  updatedAt      DateTime    @updatedAt @map("updated_at")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
   accounts       Account[]
   sessions       Session[]
-  Workspace      Workspace[]
+  documents      Document[]
 
   @@map("users")
 }
@@ -63,34 +63,19 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-model Workspace {
+model Document {
   id               String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
-  workspaceOwnerId String   @map("workspace_owner_id") @db.Uuid
   title            String   @map("title")
-  iconId           String   @map("icon_id") @db.Uuid
-  data             String?  @map("data")
-  inTrash          String?  @map("in_trash")
-  logo             String?  @map("logo")
-  bannerUrl        String?  @map("banner_url")
-  folders          Folder[]
-  user             User     @relation(fields: [workspaceOwnerId], references: [id], onDelete: Cascade)
+  userId           String   @map("user_id") @db.Uuid
+  isArchived       Boolean  @default(false) @map("is_archived")
+  parentDocumentId String?  @map("parent_document_id")
+  content          String?  @map("content")
+  coverImage       String?  @map("cover_image")
+  icon             String?  @map("icon")
+  isPublished      Boolean  @default(false) @map("is_published")
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("workspaces")
-}
-
-model Folder {
-  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamp(6)
-  title       String    @map("title")
-  iconId      String    @map("icon_id") @db.Uuid
-  data        String?   @map("data")
-  inTrash     String?   @map("in_trash")
-  bannerUrl   String?   @map("banner_url")
-  workspaceId String    @db.Uuid
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@map("folders")
+  @@map("documents")
 }
