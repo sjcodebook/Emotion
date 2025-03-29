@@ -16,21 +16,27 @@ const Dashboard = () => {
   const queryClient = useQueryClient()
 
   const handleDocumentCreation = async () => {
-    toast.loading('Creating document...')
-    const [data, err] = await createDocumentAction({
-      title: 'Untitled Document',
-    })
-    toast.dismiss()
+    try {
+      toast.loading('Creating document...')
+      const [data, err] = await createDocumentAction({
+        title: 'Untitled Document',
+      })
+      toast.dismiss()
 
-    if (err || data?.error) {
+      if (err || data?.error) {
+        toast.error('Failed to create document. Please try again.')
+        return
+      }
+
+      toast.success('Document created successfully!')
+      queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getCurrentUserDocumentsAction(),
+      })
+    } catch (error) {
+      toast.dismiss()
+      console.error('Error creating document:', error)
       toast.error('Failed to create document. Please try again.')
-      return
     }
-
-    toast.success('Document created successfully!')
-    queryClient.refetchQueries({
-      queryKey: QueryKeyFactory.getCurrentUserDocumentsAction(),
-    })
   }
 
   return (

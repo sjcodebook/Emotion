@@ -2,15 +2,20 @@
 
 import { ComponentRef, useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { ChevronsLeft, MenuIcon } from 'lucide-react'
+import { ChevronsLeft, MenuIcon, PlusCircle } from 'lucide-react'
 import { useMediaQuery } from 'usehooks-ts'
+import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
 import { useServerActionQuery } from '@/hooks/use-server-action-hooks'
 
+import LoadingSpinner from '@/components/loading-spinner'
+
 import { getCurrentUserDocumentsAction } from '../actions'
 
 import UserItem from './user-item'
+import Item from './item'
+import { createDocumentAction } from '../actions'
 
 export const Navigation = () => {
   const pathname = usePathname()
@@ -19,6 +24,7 @@ export const Navigation = () => {
     isLoading,
     isRefetching,
     data: documents,
+    refetch: refetchDocuments,
   } = useServerActionQuery(getCurrentUserDocumentsAction, {
     input: undefined,
     queryKey: ['getCurrentUserDocumentsAction'],
@@ -100,6 +106,26 @@ export const Navigation = () => {
     }
   }
 
+  const handleDocumentCreation = async () => {
+    try {
+      toast.loading('Creating document...')
+      const [data, err] = await createDocumentAction({
+        title: 'Untitled Document',
+      })
+      toast.dismiss()
+      if (err || data?.error) {
+        toast.error('Failed to create document. Please try again.')
+        return
+      }
+      toast.success('Document created successfully!')
+      await refetchDocuments()
+    } catch (error) {
+      toast.dismiss()
+      console.error('Error creating document:', error)
+      toast.error('Failed to create document. Please try again.')
+    }
+  }
+
   return (
     <>
       <aside
@@ -120,10 +146,11 @@ export const Navigation = () => {
         </div>
         <div>
           <UserItem />
+          <Item onClick={handleDocumentCreation} label='New Page' icon={PlusCircle} />
         </div>
         <div className='mt-4'>
-          {isRefetching || isLoading ? (
-            <p className='text-sm text-muted-foreground'>Loading...</p>
+          {!isLoading ? (
+            <LoadingSpinner />
           ) : (
             <>
               {documents?.data?.map((document) => (
@@ -133,6 +160,7 @@ export const Navigation = () => {
               ))}
             </>
           )}
+          {isRefetching && <LoadingSpinner />}
         </div>
         <div
           onMouseDown={handleMouseDown}
