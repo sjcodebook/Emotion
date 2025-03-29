@@ -23,7 +23,7 @@ export const Navigation = () => {
   const {
     isLoading,
     isRefetching,
-    data: documents,
+    data: allDocuments,
     refetch: refetchDocuments,
   } = useServerActionQuery(getCurrentUserDocumentsAction, {
     input: undefined,
@@ -149,18 +149,19 @@ export const Navigation = () => {
           <Item onClick={handleDocumentCreation} label='New Page' icon={PlusCircle} />
         </div>
         <div className='mt-4'>
-          {!isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <>
-              {documents?.data?.map((document) => (
-                <div key={document.id} className='p-2'>
-                  <p className='text-sm text-muted-foreground'>{document.title}</p>
-                </div>
-              ))}
-            </>
+          {isLoading && (
+            <div className='mt-4 flex items-center justify-center'>
+              <LoadingSpinner />
+            </div>
           )}
-          {isRefetching && <LoadingSpinner />}
+          {allDocuments?.data &&
+            allDocuments?.success &&
+            allDocuments?.data?.map((document) => (
+              <div key={document.id} className='p-2'>
+                <p className='text-sm text-muted-foreground'>{document.title}</p>
+              </div>
+            ))}
+          {isRefetching && <LoadingSpinner classes='ml-2' />}
         </div>
         <div
           onMouseDown={handleMouseDown}
