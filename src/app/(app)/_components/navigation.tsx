@@ -6,12 +6,23 @@ import { ChevronsLeft, MenuIcon } from 'lucide-react'
 import { useMediaQuery } from 'usehooks-ts'
 
 import { cn } from '@/lib/utils'
+import { useServerActionQuery } from '@/hooks/use-server-action-hooks'
+
+import { getCurrentUserDocumentsAction } from '../actions'
 
 import UserItem from './user-item'
 
 export const Navigation = () => {
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
+  const {
+    isLoading,
+    isRefetching,
+    data: documents,
+  } = useServerActionQuery(getCurrentUserDocumentsAction, {
+    input: undefined,
+    queryKey: ['getCurrentUserDocumentsAction'],
+  })
 
   const [isResetting, setIsResetting] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(isMobile)
@@ -111,7 +122,17 @@ export const Navigation = () => {
           <UserItem />
         </div>
         <div className='mt-4'>
-          <p>Documents</p>
+          {isRefetching || isLoading ? (
+            <p className='text-sm text-muted-foreground'>Loading...</p>
+          ) : (
+            <>
+              {documents?.data?.map((document) => (
+                <div key={document.id} className='p-2'>
+                  <p className='text-sm text-muted-foreground'>{document.title}</p>
+                </div>
+              ))}
+            </>
+          )}
         </div>
         <div
           onMouseDown={handleMouseDown}

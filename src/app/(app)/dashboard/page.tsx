@@ -4,18 +4,21 @@ import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { PlusCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { Button } from '@/components/ui/button'
+import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 
 import { createDocumentAction } from '../actions'
 
 const Dashboard = () => {
   const { data: session } = useSession()
+  const queryClient = useQueryClient()
 
   const handleDocumentCreation = async () => {
     toast.loading('Creating document...')
     const [data, err] = await createDocumentAction({
-      title: 'testtttt',
+      title: 'Untitled Document',
     })
     toast.dismiss()
 
@@ -25,6 +28,9 @@ const Dashboard = () => {
     }
 
     toast.success('Document created successfully!')
+    queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getCurrentUserDocumentsAction(),
+    })
   }
 
   return (
