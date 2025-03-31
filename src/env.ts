@@ -10,6 +10,7 @@ export const env = createEnv({
     HASH_SALT: z.string().min(1),
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
+    AUTH_TRUST_HOST: z.string().min(1),
   },
   client: {},
   runtimeEnv: {
@@ -20,5 +21,6 @@ export const env = createEnv({
     HASH_SALT: process.env.HASH_SALT,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
   },
 })

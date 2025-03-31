@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth'
 import { unauthenticatedAction } from '@/lib/safe-action'
 import { signIn } from '@/lib/auth'
 
-export const sigAction = unauthenticatedAction.createServerAction().handler(async ({ input }) => {
+export const sigAction = unauthenticatedAction.createServerAction().handler(async () => {
   try {
     await signIn('google')
   } catch (error) {

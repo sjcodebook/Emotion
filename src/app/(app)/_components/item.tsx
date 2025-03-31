@@ -27,8 +27,8 @@ const Item = ({
   expanded,
   isSearch,
   level,
-  onExpand,
-}: ItemProps) => {
+}: // onExpand,
+ItemProps) => {
   const ChevronIcon = expanded ? ChevronDown : ChevronRight
 
   return (
