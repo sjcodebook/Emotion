@@ -30,18 +30,16 @@ const LoginForm = ({ className, ...props }: React.ComponentPropsWithoutRef<'div'
 
   const onSubmit: (formData: z.infer<typeof signInSchema>) => Promise<void> = async (formData) => {
     const [data, err] = await execute(formData)
-
     if (err) {
       setError('root', { message: 'Something Went Wrong.' })
       return
     }
-
     if (data?.error) {
       setError('root', { message: data.error })
       return
     }
-
     clearErrors()
+    window.location.reload()
   }
 
   return (
