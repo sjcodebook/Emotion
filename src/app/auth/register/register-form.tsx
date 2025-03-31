@@ -35,6 +35,9 @@ const RegisterForm = ({ className, ...props }: React.ComponentPropsWithoutRef<'d
     }
     if (data?.error) {
       setError('root', { message: data.error })
+      setTimeout(() => {
+        clearErrors()
+      }, 2000)
       return
     }
     clearErrors()
