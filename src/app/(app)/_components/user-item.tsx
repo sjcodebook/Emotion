@@ -17,10 +17,6 @@ import SignOutButton from './sign-out'
 const UserItem = () => {
   const { data: session } = useSession()
 
-  if (!session) {
-    return null
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

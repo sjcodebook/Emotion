@@ -6,9 +6,9 @@ import { signOut } from '@/lib/auth'
 import { createDocumentUseCase, getDocumentsByUserIdUseCase } from '@/use-cases/documents'
 import { documentSchema } from '@/zod-schemas/documents'
 
-export const signOutAction = authenticatedAction
-  .createServerAction()
-  .handler(async () => await signOut())
+export const signOutAction = authenticatedAction.createServerAction().handler(async () => {
+  await signOut()
+})
 
 export const createDocumentAction = authenticatedAction
   .createServerAction()

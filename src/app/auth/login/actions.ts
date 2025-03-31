@@ -5,7 +5,6 @@ import { AuthError } from 'next-auth'
 import { unauthenticatedAction } from '@/lib/safe-action'
 import { signIn } from '@/lib/auth'
 import { signInSchema } from '@/zod-schemas/users'
-import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { getUserProfileByEmailUseCase } from '@/use-cases/users'
 
 export const signInAction = unauthenticatedAction
@@ -20,8 +19,9 @@ export const signInAction = unauthenticatedAction
       await signIn('credentials', {
         email: input.email,
         password: input.password,
-        redirectTo: DEFAULT_LOGIN_REDIRECT,
+        redirect: false,
       })
+      return { error: null }
     } catch (error) {
       if (error instanceof AuthError) {
         switch (error.type) {

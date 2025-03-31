@@ -1,7 +1,5 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -24,11 +22,14 @@ const SignOutButton = ({
     | undefined
   classes?: string
 }) => {
-  const router = useRouter()
-
   const handleSignOut = async () => {
-    await signOutAction()
-    router.refresh()
+    try {
+      await signOutAction()
+    } catch (error) {
+      console.error('Error signing out:', error)
+    } finally {
+      window.location.reload()
+    }
   }
 
   return (
