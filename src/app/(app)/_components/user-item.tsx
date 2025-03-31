@@ -1,9 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { ChevronsLeftRight } from 'lucide-react'
+import Avatar from 'boring-avatars'
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,20 +12,34 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import LoadingSpinner from '@/components/loading-spinner'
 
 import SignOutButton from './sign-out'
 
 const UserItem = () => {
   const { data: session } = useSession()
 
+  if (!session?.user)
+    return (
+      <div className='my-3 text-center'>
+        <LoadingSpinner />
+      </div>
+    )
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div role='button' className='flex items-center text-sm p-3 w-full hover:bg-primary/5'>
+        <div
+          role='button'
+          className='flex items-center text-sm p-3 w-full hover:bg-primary/5 cursor-pointer'>
           <div className='gap-x-2 flex items-center max-w-[150px]'>
-            <Avatar className='h-5 w-5'>
-              <AvatarImage src={session?.user?.image ?? ''} />
-            </Avatar>
+            <div className='relative h-6 w-9 rounded-full overflow-hidden'>
+              {session?.user?.image ? (
+                <Image fill src={session?.user?.image} alt={session?.user?.name + "'s avatar"} />
+              ) : (
+                <Avatar name={session?.user?.name ?? ''} variant='beam' />
+              )}
+            </div>
             <span className='text-start font-medium line-clamp-1'>
               {session?.user?.name}&apos; Emotion
             </span>
@@ -39,9 +54,13 @@ const UserItem = () => {
           </p>
           <div className='flex items-center gap-x-2'>
             <div className='rounded-md bg-secondary p-1'>
-              <Avatar className='h-8 w-8'>
-                <AvatarImage src={session?.user?.image ?? ''} />
-              </Avatar>
+              <div className='relative h-6 w-6 rounded-full overflow-hidden'>
+                {session?.user?.image ? (
+                  <Image fill src={session?.user?.image} alt={session?.user?.name + "'s avatar"} />
+                ) : (
+                  <Avatar name={session?.user?.name ?? ''} variant='beam' />
+                )}
+              </div>
             </div>
             <div className='space-y-1'>
               <p className='text-sm line-clamp-1'>{session?.user?.name}&apos;s Emotion</p>
