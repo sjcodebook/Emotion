@@ -33,9 +33,14 @@ const UserItem = () => {
           role='button'
           className='flex items-center text-sm p-3 w-full hover:bg-primary/5 cursor-pointer'>
           <div className='gap-x-2 flex items-center max-w-[150px]'>
-            <div className='relative h-6 w-9 rounded-full overflow-hidden'>
+            <div className='relative h-6 w-7 rounded-full'>
               {session?.user?.image ? (
-                <Image fill src={session?.user?.image} alt={session?.user?.name + "'s avatar"} />
+                <Image
+                  fill
+                  objectFit='contain'
+                  src={session?.user?.image}
+                  alt={session?.user?.name + "'s avatar"}
+                />
               ) : (
                 <Avatar name={session?.user?.name ?? ''} variant='beam' />
               )}
