@@ -50,12 +50,12 @@ export const createDocumentAction = authenticatedAction
   .input(documentSchema)
   .handler(async ({ ctx, input }) => {
     try {
-      await createDocumentUseCase({
+      const data = await createDocumentUseCase({
         title: input.title,
         parentDocumentId: input.parentDocumentId ?? null,
         userId: ctx.user.id as string,
       })
-      return { success: true, message: 'Document created successfully!', error: null }
+      return { success: true, message: 'Document created successfully!', error: null, data }
     } catch (error) {
       return { message: 'Failed to create document', error }
     }

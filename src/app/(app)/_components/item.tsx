@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 import { ChevronDown, ChevronRight, LucideIcon, Plus } from 'lucide-react'
@@ -35,6 +36,7 @@ const Item = ({
   onClick,
   icon: Icon,
 }: ItemProps) => {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const ChevronIcon = expanded ? ChevronDown : ChevronRight
 
@@ -64,6 +66,11 @@ const Item = ({
       queryClient.refetchQueries({
         queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(id),
       })
+
+      if (!expanded) {
+        onExpand?.()
+      }
+      router.push(`/documents/${data?.data?.id}}`)
     } catch (error) {
       toast.dismiss()
       console.error('Error creating document:', error)
