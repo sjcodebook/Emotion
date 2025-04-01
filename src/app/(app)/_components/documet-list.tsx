@@ -81,7 +81,7 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
           )}
         </div>
       ))}
-      {(isLoading || isRefetching) && (
+      {isLoading && (
         <>
           <Item.Skeleton level={level} />
           {level === 0 && (
@@ -90,6 +90,11 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
               <Item.Skeleton level={level} />
             </>
           )}
+        </>
+      )}
+      {isRefetching && (
+        <>
+          <Item.Skeleton level={level} />
         </>
       )}
     </>

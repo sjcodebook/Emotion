@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react'
+import { ChevronDown, ChevronRight, LucideIcon, Plus } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -67,6 +67,13 @@ const Item = ({
           <span className='text-xs'>⌘</span>K
         </kbd>
       )}
+      {!!id && (
+        <div className='ml-auto flex items-center gap-x-2'>
+          <div className='opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:bg-neutral-600'>
+            <Plus className='h-4 w-4 text-muted-foreground' />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -79,7 +86,7 @@ Item.Skeleton = function ItemSkeleton({ level }: { level?: number }) {
       }}
       className='flex gap-x-2 py-[3px]'>
       <Skeleton className='h-4 w-4 bg-gray-300' />
-      <Skeleton className='h-4 w-[30%] bg-gray-300' />
+      <Skeleton className='h-4 w-[50%] bg-gray-300' />
     </div>
   )
 }
