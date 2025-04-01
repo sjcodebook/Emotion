@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-
-import { useServerActionQuery } from '@/hooks/use-server-action-hooks'
-
-import { getCurrentUserDocumentByParentDocumentIdAction } from '../actions'
-import Item from './item'
-import { cn } from '@/lib/utils'
 import { FileIcon } from 'lucide-react'
+
+import { useServerActionQuery, QueryKeyFactory } from '@/hooks/use-server-action-hooks'
+import { cn } from '@/lib/utils'
+
+import Item from './item'
+import { getCurrentUserDocumentByParentDocumentIdAction } from '../actions'
 
 interface DocumentListProps {
   parentDocumentId?: string
@@ -24,12 +24,11 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
     isLoading,
     isRefetching,
     data: allDocuments,
-    // refetch: refetchDocuments,
   } = useServerActionQuery(getCurrentUserDocumentByParentDocumentIdAction, {
     input: {
       parentDocumentId: parentDocumentId || null,
     },
-    queryKey: ['getCurrentUserDocumentByParentDocumentIdAction'],
+    queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(),
   })
 
   const onExpand = (documentId: string) => {
