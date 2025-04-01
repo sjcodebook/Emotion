@@ -16,7 +16,7 @@ interface DocumentListProps {
   data?: unknown[]
 }
 
-const DocumentList = ({ parentDocumentId, level = 0, data = [] }: DocumentListProps) => {
+const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
   const params = useParams()
   const router = useRouter()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -24,7 +24,7 @@ const DocumentList = ({ parentDocumentId, level = 0, data = [] }: DocumentListPr
     isLoading,
     isRefetching,
     data: allDocuments,
-    refetch: refetchDocuments,
+    // refetch: refetchDocuments,
   } = useServerActionQuery(getCurrentUserDocumentByParentDocumentIdAction, {
     input: {
       parentDocumentId: parentDocumentId || null,
@@ -57,18 +57,6 @@ const DocumentList = ({ parentDocumentId, level = 0, data = [] }: DocumentListPr
     )
   }
 
-  if (allDocuments?.data?.length === 0) {
-    return (
-      <p
-        style={{
-          paddingLeft: level ? `${level * 12 + 25}px` : undefined,
-        }}
-        className={cn('pl-4 text-sm font-medium text-muted-foreground/80')}>
-        No pages created yet
-      </p>
-    )
-  }
-
   return (
     <>
       <p
@@ -94,7 +82,6 @@ const DocumentList = ({ parentDocumentId, level = 0, data = [] }: DocumentListPr
             expanded={expanded[document.id]}
             level={level}
             onExpand={() => onExpand(document.id)}
-            expanded={expanded[document.id]}
           />
           {expanded[document.id] && (
             <DocumentList parentDocumentId={document.id} level={level + 1} />
