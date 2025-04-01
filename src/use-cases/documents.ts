@@ -4,7 +4,10 @@ import {
   getUserDocumentsByParentDocumentId,
 } from '@/data-access/documents'
 
-import type { GetUserDocumentsByParentDocumentIdInterface } from '@/data-access/documents'
+import type {
+  GetUserDocumentsByParentDocumentIdInterface,
+  CreateDocumentInterface,
+} from '@/data-access/documents'
 
 export async function getUserDocumentsByParentDocumentIdUseCase({
   userId,
@@ -24,10 +27,15 @@ export async function getDocumentsByUserIdUseCase(userId: string) {
   return docs
 }
 
-export async function createDocumentUseCase({ title, userId }: { title: string; userId: string }) {
+export async function createDocumentUseCase({
+  title,
+  userId,
+  parentDocumentId,
+}: CreateDocumentInterface) {
   const newDoc = await createDocument({
     title,
     userId,
+    parentDocumentId,
   })
   return newDoc
 }

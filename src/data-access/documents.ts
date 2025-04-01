@@ -48,11 +48,24 @@ export async function getDocumentsByUserId(userId: string) {
   return documents
 }
 
-export async function createDocument({ title, userId }: { title: string; userId: string }) {
+export interface CreateDocumentInterface
+  extends Omit<Partial<Document>, 'userId' | 'parentDocumentId' | 'title'> {
+  title: string
+  userId: string
+  parentDocumentId?: string | null
+}
+export async function createDocument({
+  title,
+  userId,
+  parentDocumentId = null,
+  ...rest
+}: CreateDocumentInterface) {
   const newDoc = await db.document.create({
     data: {
       title,
       userId,
+      parentDocumentId,
+      ...rest,
     },
   })
 

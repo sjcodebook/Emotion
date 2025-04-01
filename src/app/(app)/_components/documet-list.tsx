@@ -52,17 +52,19 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
 
   return (
     <>
-      <p
-        style={{
-          paddingLeft: level ? `${level * 12 + 25}px` : undefined,
-        }}
-        className={cn(
-          'text-sm font-medium text-muted-foreground/80',
-          !allDocuments?.data?.length || allDocuments.data.length === 0 ? 'block' : 'hidden',
-          level === 0 && 'hidden'
-        )}>
-        No pages inside
-      </p>
+      {!isLoading && !isRefetching && (
+        <p
+          style={{
+            paddingLeft: level ? `${level * 12 + 25}px` : undefined,
+          }}
+          className={cn(
+            'text-sm font-medium text-muted-foreground/80',
+            !allDocuments?.data?.length || allDocuments.data.length === 0 ? 'block' : 'hidden',
+            level === 0 && 'hidden'
+          )}>
+          No pages inside
+        </p>
+      )}
       {allDocuments?.data?.map((document) => (
         <div key={document.id}>
           <Item

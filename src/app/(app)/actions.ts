@@ -52,6 +52,7 @@ export const createDocumentAction = authenticatedAction
     try {
       await createDocumentUseCase({
         title: input.title,
+        parentDocumentId: input.parentDocumentId ?? null,
         userId: ctx.user.id as string,
       })
       return { success: true, message: 'Document created successfully!', error: null }

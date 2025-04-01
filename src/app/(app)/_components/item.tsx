@@ -1,9 +1,14 @@
 'use client'
 
+import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 import { ChevronDown, ChevronRight, LucideIcon, Plus } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
+import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
+
+import { createDocumentAction } from '../actions'
 
 interface ItemProps {
   id?: string
@@ -30,11 +35,40 @@ const Item = ({
   onClick,
   icon: Icon,
 }: ItemProps) => {
+  const queryClient = useQueryClient()
   const ChevronIcon = expanded ? ChevronDown : ChevronRight
 
   const handleExpand = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation()
     onExpand?.()
+  }
+
+  const onCreate = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.stopPropagation()
+    if (!id) return
+
+    try {
+      toast.loading('Creating document...')
+      const [data, err] = await createDocumentAction({
+        title: 'Untitled Document',
+        parentDocumentId: id,
+      })
+      toast.dismiss()
+
+      if (err || data?.error) {
+        toast.error('Failed to create document. Please try again.')
+        return
+      }
+
+      toast.success('Document created successfully!')
+      queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(id),
+      })
+    } catch (error) {
+      toast.dismiss()
+      console.error('Error creating document:', error)
+      toast.error('Failed to create document. Please try again.')
+    }
   }
 
   return (
@@ -68,7 +102,7 @@ const Item = ({
         </kbd>
       )}
       {!!id && (
-        <div className='ml-auto flex items-center gap-x-2'>
+        <div className='ml-auto flex items-center gap-x-2' onClick={onCreate}>
           <div className='opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 p-1'>
             <Plus className='h-4 w-4 text-muted-foreground' />
           </div>
