@@ -1,7 +1,9 @@
 import {
+  getDocumentById,
   getDocumentsByUserId,
   createDocument,
   getUserDocumentsByParentDocumentId,
+  updateDocumentArchiveStatus,
 } from '@/data-access/documents'
 
 import type {
@@ -22,6 +24,11 @@ export async function getUserDocumentsByParentDocumentIdUseCase({
   return docs
 }
 
+export async function getDocumentByIdUseCase(documentId: string) {
+  const doc = await getDocumentById(documentId)
+  return doc
+}
+
 export async function getDocumentsByUserIdUseCase(userId: string) {
   const docs = await getDocumentsByUserId(userId)
   return docs
@@ -38,4 +45,19 @@ export async function createDocumentUseCase({
     parentDocumentId,
   })
   return newDoc
+}
+
+export async function updateDocumentArchiveStatusUseCase({
+  documentId,
+  isArchived,
+}: {
+  documentId: string
+  isArchived: boolean
+}) {
+  const updatedDoc = await updateDocumentArchiveStatus({
+    documentId,
+    isArchived,
+  })
+
+  return updatedDoc
 }

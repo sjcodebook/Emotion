@@ -71,3 +71,22 @@ export async function createDocument({
 
   return newDoc
 }
+
+export async function updateDocumentArchiveStatus({
+  documentId,
+  isArchived = false,
+}: {
+  documentId: string
+  isArchived: boolean
+}) {
+  const updatedDoc = await db.document.update({
+    where: {
+      id: documentId,
+    },
+    data: {
+      isArchived,
+    },
+  })
+
+  return updatedDoc
+}
