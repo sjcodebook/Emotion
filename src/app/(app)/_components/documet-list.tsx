@@ -26,9 +26,9 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
     data: allDocuments,
   } = useServerActionQuery(getCurrentUserDocumentByParentDocumentIdAction, {
     input: {
-      parentDocumentId: parentDocumentId || null,
+      parentDocumentId: parentDocumentId ?? null,
     },
-    queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(),
+    queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(parentDocumentId),
   })
 
   const onExpand = (documentId: string) => {
@@ -42,17 +42,11 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
     router.push(`/documents/${documentId}`)
   }
 
-  if (isLoading || isRefetching) {
+  if ((!isLoading || !isRefetching) && allDocuments?.data?.length === 0 && level === 0) {
     return (
-      <>
-        <Item.Skeleton level={level} />
-        {level === 0 && (
-          <>
-            <Item.Skeleton level={level} />
-            <Item.Skeleton level={level} />
-          </>
-        )}
-      </>
+      <p className='pl-4  text-sm font-medium text-muted-foreground/80'>
+        Create a new notebook to get started. 🚀
+      </p>
     )
   }
 
@@ -63,8 +57,8 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
           paddingLeft: level ? `${level * 12 + 25}px` : undefined,
         }}
         className={cn(
-          'hidden text-sm font-medium text-muted-foreground/80',
-          expanded && 'last:block',
+          'text-sm font-medium text-muted-foreground/80',
+          !allDocuments?.data?.length || allDocuments.data.length === 0 ? 'block' : 'hidden',
           level === 0 && 'hidden'
         )}>
         No pages inside
@@ -87,6 +81,17 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
           )}
         </div>
       ))}
+      {(isLoading || isRefetching) && (
+        <>
+          <Item.Skeleton level={level} />
+          {level === 0 && (
+            <>
+              <Item.Skeleton level={level} />
+              <Item.Skeleton level={level} />
+            </>
+          )}
+        </>
+      )}
     </>
   )
 }

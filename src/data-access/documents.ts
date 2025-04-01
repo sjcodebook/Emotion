@@ -28,6 +28,9 @@ export async function getUserDocumentsByParentDocumentId({
       parentDocumentId,
       ...rest,
     },
+    orderBy: {
+      createdAt: 'asc',
+    },
   })
 
   return documents
