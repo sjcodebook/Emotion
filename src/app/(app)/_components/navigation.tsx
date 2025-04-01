@@ -5,30 +5,20 @@ import { usePathname } from 'next/navigation'
 import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from 'lucide-react'
 import { useMediaQuery } from 'usehooks-ts'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 
+import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 import { cn } from '@/lib/utils'
-import { useServerActionQuery } from '@/hooks/use-server-action-hooks'
-
-import LoadingSpinner from '@/components/loading-spinner'
-
-import { getCurrentUserDocumentsAction } from '../actions'
 
 import UserItem from './user-item'
 import Item from './item'
+import DocumentList from './documet-list'
 import { createDocumentAction } from '../actions'
 
 export const Navigation = () => {
+  const queryClient = useQueryClient()
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
-  const {
-    isLoading,
-    isRefetching,
-    data: allDocuments,
-    refetch: refetchDocuments,
-  } = useServerActionQuery(getCurrentUserDocumentsAction, {
-    input: undefined,
-    queryKey: ['getCurrentUserDocumentsAction'],
-  })
 
   const [isResetting, setIsResetting] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(isMobile)
@@ -118,7 +108,9 @@ export const Navigation = () => {
         return
       }
       toast.success('Document created successfully!')
-      await refetchDocuments()
+      queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(),
+      })
     } catch (error) {
       toast.dismiss()
       console.error('Error creating document:', error)
@@ -151,19 +143,7 @@ export const Navigation = () => {
           <Item onClick={handleDocumentCreation} label='New Page' icon={PlusCircle} />
         </div>
         <div className='mt-4'>
-          {isLoading && (
-            <div className='mt-4 flex items-center justify-center'>
-              <LoadingSpinner />
-            </div>
-          )}
-          {allDocuments?.data &&
-            allDocuments?.success &&
-            allDocuments?.data?.map((document) => (
-              <div key={document.id} className='p-2'>
-                <p className='text-sm text-muted-foreground'>{document.title}</p>
-              </div>
-            ))}
-          {isRefetching && <LoadingSpinner classes='ml-2' />}
+          <DocumentList />
         </div>
         <div
           onMouseDown={handleMouseDown}
