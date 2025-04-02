@@ -132,7 +132,7 @@ const Item = ({
       {!!id && (
         <div
           role='button'
-          className='p-1 h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 mr-1'
+          className='p-[2px] h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 mr-1'
           onClick={handleExpand}>
           <ChevronIcon className='h-4 w-4 shrink-0 text-muted-foreground/50' />
         </div>
@@ -155,7 +155,7 @@ const Item = ({
               <div
                 role='button'
                 className={cn(
-                  'h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 p-1',
+                  'h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 p-[2px]',
                   isDropdownOpen
                     ? 'opacity-100 bg-neutral-300'
                     : 'opacity-0 group-hover:opacity-100'
@@ -180,7 +180,7 @@ const Item = ({
             </DropdownMenuContent>
           </DropdownMenu>
           <div
-            className='opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 p-1'
+            className='opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 p-[2px]'
             onClick={(e) => {
               e.stopPropagation()
               onCreate(e)

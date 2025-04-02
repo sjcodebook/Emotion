@@ -148,7 +148,7 @@ export const Navigation = () => {
             onClick={handleDocumentCreation}
             label='Add a Page'
             icon={PlusSquare}
-            itemClasses='mt-1 ml-[4px]'
+            itemClasses='mt-2 ml-[2px]'
           />
         </div>
         <div

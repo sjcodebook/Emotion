@@ -44,8 +44,10 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
 
   if ((!isLoading || !isRefetching) && allDocuments?.data?.length === 0 && level === 0) {
     return (
-      <p className='pl-4  text-sm font-medium text-muted-foreground/80'>
-        Create a new notebook to get started. 🚀
+      <p className='pl-4 text-sm font-medium text-muted-foreground/80'>
+        Create a new page to get
+        <br />
+        started. 🚀
       </p>
     )
   }
