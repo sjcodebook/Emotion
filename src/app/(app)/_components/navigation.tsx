@@ -2,7 +2,7 @@
 
 import { ComponentRef, useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from 'lucide-react'
+import { ChevronsLeft, MenuIcon, PlusCircle, PlusSquare, Search, Settings } from 'lucide-react'
 import { useMediaQuery } from 'usehooks-ts'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
@@ -144,6 +144,12 @@ export const Navigation = () => {
         </div>
         <div className='mt-4'>
           <DocumentList />
+          <Item
+            onClick={handleDocumentCreation}
+            label='Add a Page'
+            icon={PlusSquare}
+            itemClasses='mt-1 ml-[4px]'
+          />
         </div>
         <div
           onMouseDown={handleMouseDown}
