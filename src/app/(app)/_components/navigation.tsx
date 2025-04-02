@@ -2,13 +2,22 @@
 
 import { ComponentRef, useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { ChevronsLeft, MenuIcon, PlusCircle, PlusSquare, Search, Settings } from 'lucide-react'
+import {
+  ChevronsLeft,
+  MenuIcon,
+  PlusCircle,
+  PlusSquare,
+  Search,
+  Settings,
+  Trash,
+} from 'lucide-react'
 import { useMediaQuery } from 'usehooks-ts'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 import { cn } from '@/lib/utils'
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 
 import UserItem from './user-item'
 import Item from './item'
@@ -150,6 +159,14 @@ export const Navigation = () => {
             icon={PlusSquare}
             itemClasses='mt-2 ml-[2px]'
           />
+          <Popover>
+            <PopoverTrigger className='w-full mt-4'>
+              <Item label='Trash' icon={Trash} />
+            </PopoverTrigger>
+            <PopoverContent side={isMobile ? 'bottom' : 'right'} className='p-0 w-72'>
+              <p>Trash box</p>
+            </PopoverContent>
+          </Popover>
         </div>
         <div
           onMouseDown={handleMouseDown}

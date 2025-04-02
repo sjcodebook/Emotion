@@ -29,7 +29,7 @@ interface ItemProps {
   level?: number
   onExpand?: () => void
   label: string
-  onClick: () => void
+  onClick?: () => void
   icon: LucideIcon
 }
 
@@ -41,9 +41,9 @@ const Item = ({
   expanded,
   isSearch,
   level,
-  onExpand,
+  onExpand = () => {},
   label,
-  onClick,
+  onClick = () => {},
   icon: Icon,
 }: ItemProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
