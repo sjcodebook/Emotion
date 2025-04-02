@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 
-import { createDocumentAction, updateDocumentsArchiveStatusAction } from '../actions'
+import { createDocumentAction, archiveDocumentsAction } from '../actions'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -95,9 +95,8 @@ const Item = ({
 
     try {
       toast.loading('Archiving document...')
-      const [data, err] = await updateDocumentsArchiveStatusAction({
+      const [data, err] = await archiveDocumentsAction({
         parentDocumentId: id,
-        isArchived: true,
       })
       toast.dismiss()
 

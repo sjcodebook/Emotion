@@ -4,6 +4,7 @@ import {
   createDocument,
   getUserDocumentsByParentDocumentId,
   updateDocumentArchiveStatus,
+  getUserArchivedDocuments,
 } from '@/data-access/documents'
 
 import type {
@@ -26,6 +27,11 @@ export async function getUserDocumentsByParentDocumentIdUseCase({
 
 export async function getDocumentByIdUseCase(documentId: string) {
   const doc = await getDocumentById(documentId)
+  return doc
+}
+
+export async function getUserArchivedDocumentsUseCase(userId: string) {
+  const doc = await getUserArchivedDocuments(userId)
   return doc
 }
 

@@ -9,9 +9,10 @@ import {
   getDocumentsByUserIdUseCase,
   getUserDocumentsByParentDocumentIdUseCase,
   updateDocumentArchiveStatusUseCase,
+  getUserArchivedDocumentsUseCase,
 } from '@/use-cases/documents'
 import { documentSchema } from '@/zod-schemas/documents'
-import { object, string, boolean } from 'zod'
+import { object, string } from 'zod'
 
 export const signOutAction = authenticatedAction.createServerAction().handler(async () => {
   await signOut()
@@ -25,6 +26,17 @@ export const getCurrentUserDocumentsAction = authenticatedAction
       return { success: true, data: userDocs, error: null }
     } catch (error) {
       return { message: 'Failed to get user documents', error }
+    }
+  })
+
+export const getCurrentUserArchivedDocumentsAction = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx }) => {
+    try {
+      const userDocs = await getUserArchivedDocumentsUseCase(ctx.user.id as string)
+      return { success: true, data: userDocs, error: null }
+    } catch (error) {
+      return { message: 'Failed to get user archived documents', error }
     }
   })
 
@@ -64,9 +76,9 @@ export const createDocumentAction = authenticatedAction
     }
   })
 
-export const updateDocumentsArchiveStatusAction = authenticatedAction
+export const archiveDocumentsAction = authenticatedAction
   .createServerAction()
-  .input(object({ parentDocumentId: string(), isArchived: boolean() }))
+  .input(object({ parentDocumentId: string() }))
   .handler(async ({ ctx, input }) => {
     try {
       const doc = await getDocumentByIdUseCase(input.parentDocumentId)
@@ -77,7 +89,7 @@ export const updateDocumentsArchiveStatusAction = authenticatedAction
         return { message: 'You are not authorized to update this document', error: true }
       }
 
-      const recursiveArchive = async (parentDocumentId: string, isArchived: boolean) => {
+      const recursiveArchive = async (parentDocumentId: string) => {
         const childrens = await getUserDocumentsByParentDocumentIdUseCase({
           userId: ctx.user.id as string,
           parentDocumentId,
@@ -86,18 +98,18 @@ export const updateDocumentsArchiveStatusAction = authenticatedAction
         for (const child of childrens) {
           await updateDocumentArchiveStatusUseCase({
             documentId: child.id,
-            isArchived,
+            isArchived: true,
           })
-          await recursiveArchive(child.id, isArchived)
+          await recursiveArchive(child.id)
         }
       }
 
       await updateDocumentArchiveStatusUseCase({
         documentId: input.parentDocumentId,
-        isArchived: input.isArchived,
+        isArchived: true,
       })
 
-      await recursiveArchive(input.parentDocumentId, input.isArchived)
+      await recursiveArchive(input.parentDocumentId)
 
       return { success: true, message: 'Document updated successfully!', error: null }
     } catch (error) {
