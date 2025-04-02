@@ -81,6 +81,7 @@ const Item = ({
       if (!expanded) {
         onExpand?.()
       }
+
       router.push(`/documents/${data?.data?.id}}`)
     } catch (error) {
       toast.dismiss()
@@ -106,9 +107,7 @@ const Item = ({
       }
 
       toast.success('Document archived successfully!')
-      queryClient.refetchQueries({
-        queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(id),
-      })
+      queryClient.refetchQueries()
     } catch (error) {
       toast.dismiss()
       console.error('Error archiving document:', error)
