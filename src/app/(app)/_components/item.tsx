@@ -1,15 +1,23 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronDown, ChevronRight, LucideIcon, Plus } from 'lucide-react'
+import { ChevronDown, ChevronRight, LucideIcon, MoreHorizontal, Plus, Trash } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 
-import { createDocumentAction } from '../actions'
+import { createDocumentAction, updateDocumentsArchiveStatusAction } from '../actions'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 
 interface ItemProps {
   id?: string
@@ -36,6 +44,7 @@ const Item = ({
   onClick,
   icon: Icon,
 }: ItemProps) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const router = useRouter()
   const queryClient = useQueryClient()
   const ChevronIcon = expanded ? ChevronDown : ChevronRight
@@ -78,6 +87,34 @@ const Item = ({
     }
   }
 
+  const onArchive = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.stopPropagation()
+    if (!id) return
+
+    try {
+      toast.loading('Archiving document...')
+      const [data, err] = await updateDocumentsArchiveStatusAction({
+        parentDocumentId: id,
+        isArchived: true,
+      })
+      toast.dismiss()
+
+      if (err || data?.error) {
+        toast.error('Failed to archive document. Please try again.')
+        return
+      }
+
+      toast.success('Document archived successfully!')
+      queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(),
+      })
+    } catch (error) {
+      toast.dismiss()
+      console.error('Error archiving document:', error)
+      toast.error('Failed to archive document. Please try again.')
+    }
+  }
+
   return (
     <div
       onClick={onClick}
@@ -109,8 +146,42 @@ const Item = ({
         </kbd>
       )}
       {!!id && (
-        <div className='ml-auto flex items-center gap-x-2' onClick={onCreate}>
-          <div className='opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 p-1'>
+        <div className='ml-auto flex items-center gap-x-2'>
+          <DropdownMenu onOpenChange={setIsDropdownOpen}>
+            <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+              <div
+                role='button'
+                className={cn(
+                  'h-full ml-auto rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 p-1',
+                  isDropdownOpen
+                    ? 'opacity-100 bg-neutral-300'
+                    : 'opacity-0 group-hover:opacity-100'
+                )}>
+                <MoreHorizontal className='h-4 w-4 text-muted-foreground' />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='w-60' align='start' side='right' forceMount>
+              <DropdownMenuItem
+                className='cursor-pointer'
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onArchive(e)
+                }}>
+                <Trash className='h-4 w-4 mr-2' />
+                Delete
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <div className='text-xs text-muted-foreground px-2 py-1'>
+                Last edited by <span className='font-semibold'>User</span>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <div
+            className='opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 p-1'
+            onClick={(e) => {
+              e.stopPropagation()
+              onCreate(e)
+            }}>
             <Plus className='h-4 w-4 text-muted-foreground' />
           </div>
         </div>

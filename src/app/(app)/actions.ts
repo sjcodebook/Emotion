@@ -40,6 +40,7 @@ export const getCurrentUserDocumentByParentDocumentIdAction = authenticatedActio
       const userDocs = await getUserDocumentsByParentDocumentIdUseCase({
         userId: ctx.user.id as string,
         parentDocumentId: input.parentDocumentId ?? null,
+        isArchived: false,
       })
       return { success: true, data: userDocs, error: null }
     } catch (error) {
@@ -63,23 +64,42 @@ export const createDocumentAction = authenticatedAction
     }
   })
 
-export const updateDocumentArchiveStatusAction = authenticatedAction
+export const updateDocumentsArchiveStatusAction = authenticatedAction
   .createServerAction()
-  .input(object({ documentId: string(), isArchived: boolean() }))
+  .input(object({ parentDocumentId: string(), isArchived: boolean() }))
   .handler(async ({ ctx, input }) => {
     try {
-      const doc = await getDocumentByIdUseCase(input.documentId)
+      const doc = await getDocumentByIdUseCase(input.parentDocumentId)
       if (!doc) {
         return { message: 'Document not found', error: true }
       }
       if (doc.userId !== ctx.user.id) {
         return { message: 'You are not authorized to update this document', error: true }
       }
-      const data = await updateDocumentArchiveStatusUseCase({
-        documentId: input.documentId,
+
+      const recursiveArchive = async (parentDocumentId: string, isArchived: boolean) => {
+        const childrens = await getUserDocumentsByParentDocumentIdUseCase({
+          userId: ctx.user.id as string,
+          parentDocumentId,
+        })
+
+        for (const child of childrens) {
+          await updateDocumentArchiveStatusUseCase({
+            documentId: child.id,
+            isArchived,
+          })
+          await recursiveArchive(child.id, isArchived)
+        }
+      }
+
+      await updateDocumentArchiveStatusUseCase({
+        documentId: input.parentDocumentId,
         isArchived: input.isArchived,
       })
-      return { success: true, message: 'Document updated successfully!', error: null, data }
+
+      await recursiveArchive(input.parentDocumentId, input.isArchived)
+
+      return { success: true, message: 'Document updated successfully!', error: null }
     } catch (error) {
       return { message: 'Failed to create document', error }
     }
