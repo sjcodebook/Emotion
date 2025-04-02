@@ -107,7 +107,7 @@ const Item = ({
 
       toast.success('Document archived successfully!')
       queryClient.refetchQueries({
-        queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(),
+        queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(id),
       })
     } catch (error) {
       toast.dismiss()

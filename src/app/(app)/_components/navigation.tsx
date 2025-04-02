@@ -22,6 +22,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import UserItem from './user-item'
 import Item from './item'
 import DocumentList from './documet-list'
+import TrashBox from './trash-box'
 import { createDocumentAction } from '../actions'
 
 export const Navigation = () => {
@@ -29,6 +30,7 @@ export const Navigation = () => {
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
 
+  const [isTrashOpen, setIsTrashOpen] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(isMobile)
 
@@ -159,12 +161,12 @@ export const Navigation = () => {
             icon={PlusSquare}
             itemClasses='mt-2 ml-[2px]'
           />
-          <Popover>
+          <Popover onOpenChange={setIsTrashOpen}>
             <PopoverTrigger className='w-full ml-[2px]'>
-              <Item label='Trash' icon={Trash} />
+              <Item active={isTrashOpen} label='Trash' icon={Trash} />
             </PopoverTrigger>
             <PopoverContent side={isMobile ? 'bottom' : 'right'} className='p-0 w-72'>
-              <p>Trash box</p>
+              <TrashBox />
             </PopoverContent>
           </Popover>
         </div>
