@@ -160,7 +160,7 @@ export const Navigation = () => {
             itemClasses='mt-2 ml-[2px]'
           />
           <Popover>
-            <PopoverTrigger className='w-full mt-4'>
+            <PopoverTrigger className='w-full ml-[2px]'>
               <Item label='Trash' icon={Trash} />
             </PopoverTrigger>
             <PopoverContent side={isMobile ? 'bottom' : 'right'} className='p-0 w-72'>

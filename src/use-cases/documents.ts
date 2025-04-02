@@ -3,13 +3,15 @@ import {
   getDocumentsByUserId,
   createDocument,
   getUserDocumentsByParentDocumentId,
-  updateDocumentArchiveStatus,
+  updateDocument,
+  deleteDocument,
   getUserArchivedDocuments,
 } from '@/data-access/documents'
 
 import type {
   GetUserDocumentsByParentDocumentIdInterface,
   CreateDocumentInterface,
+  UpdateDocumentInterface,
 } from '@/data-access/documents'
 
 export async function getUserDocumentsByParentDocumentIdUseCase({
@@ -53,17 +55,19 @@ export async function createDocumentUseCase({
   return newDoc
 }
 
-export async function updateDocumentArchiveStatusUseCase({
-  documentId,
-  isArchived,
-}: {
-  documentId: string
-  isArchived: boolean
-}) {
-  const updatedDoc = await updateDocumentArchiveStatus({
-    documentId,
-    isArchived,
+export async function updateDocumentUseCase({ id, ...data }: UpdateDocumentInterface) {
+  const updatedDoc = await updateDocument({
+    id,
+    ...data,
   })
 
   return updatedDoc
+}
+
+export async function deleteDocumentUseCase({ id }: { id: string }) {
+  await deleteDocument({
+    id,
+  })
+
+  return null
 }

@@ -86,21 +86,26 @@ export async function createDocument({
   return newDoc
 }
 
-export async function updateDocumentArchiveStatus({
-  documentId,
-  isArchived = false,
-}: {
-  documentId: string
-  isArchived: boolean
-}) {
+export interface UpdateDocumentInterface extends Omit<Partial<Document>, 'id'> {
+  id: string
+}
+export async function updateDocument({ id, ...data }: UpdateDocumentInterface) {
   const updatedDoc = await db.document.update({
     where: {
-      id: documentId,
+      id,
     },
-    data: {
-      isArchived,
-    },
+    data,
   })
 
   return updatedDoc
+}
+
+export async function deleteDocument({ id }: { id: string }) {
+  await db.document.delete({
+    where: {
+      id,
+    },
+  })
+
+  return null
 }

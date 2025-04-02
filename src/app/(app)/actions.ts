@@ -6,9 +6,10 @@ import { signOut } from '@/lib/auth'
 import {
   getDocumentByIdUseCase,
   createDocumentUseCase,
+  updateDocumentUseCase,
+  deleteDocumentUseCase,
   getDocumentsByUserIdUseCase,
   getUserDocumentsByParentDocumentIdUseCase,
-  updateDocumentArchiveStatusUseCase,
   getUserArchivedDocumentsUseCase,
 } from '@/use-cases/documents'
 import { documentSchema } from '@/zod-schemas/documents'
@@ -96,23 +97,110 @@ export const archiveDocumentsAction = authenticatedAction
         })
 
         for (const child of childrens) {
-          await updateDocumentArchiveStatusUseCase({
-            documentId: child.id,
+          await updateDocumentUseCase({
+            id: child.id,
             isArchived: true,
           })
           await recursiveArchive(child.id)
         }
       }
 
-      await updateDocumentArchiveStatusUseCase({
-        documentId: input.parentDocumentId,
+      await updateDocumentUseCase({
+        id: input.parentDocumentId,
         isArchived: true,
       })
 
       await recursiveArchive(input.parentDocumentId)
 
-      return { success: true, message: 'Document updated successfully!', error: null }
+      return { success: true, message: 'Document archived successfully!', error: null }
     } catch (error) {
-      return { message: 'Failed to create document', error }
+      return { message: 'Failed to archive document', error }
+    }
+  })
+
+export const restoreArchivedDocumentsAction = authenticatedAction
+  .createServerAction()
+  .input(object({ documentId: string() }))
+  .handler(async ({ ctx, input }) => {
+    try {
+      const doc = await getDocumentByIdUseCase(input.documentId)
+      if (!doc) {
+        return { message: 'Document not found', error: true }
+      }
+      if (doc.userId !== ctx.user.id) {
+        return { message: 'You are not authorized to update this document', error: true }
+      }
+
+      const recursiveRestoreArchive = async (id: string) => {
+        const childrens = await getUserDocumentsByParentDocumentIdUseCase({
+          userId: ctx.user.id as string,
+          parentDocumentId: id,
+        })
+
+        for (const child of childrens) {
+          await updateDocumentUseCase({
+            id: child.id,
+            isArchived: false,
+          })
+          await recursiveRestoreArchive(child.id)
+        }
+      }
+
+      const options: { isArchived: boolean; parentDocumentId?: string | null } = {
+        isArchived: false,
+      }
+
+      if (doc.parentDocumentId) {
+        const parentDoc = await getDocumentByIdUseCase(doc.parentDocumentId)
+        if (parentDoc?.isArchived) {
+          options.parentDocumentId = null
+        }
+      }
+
+      await updateDocumentUseCase({
+        id: input.documentId,
+        ...options,
+      })
+
+      await recursiveRestoreArchive(input.documentId)
+
+      return { success: true, message: 'Document restored successfully!', error: null }
+    } catch (error) {
+      return { message: 'Failed to restore document', error }
+    }
+  })
+
+export const deleteDocumentAction = authenticatedAction
+  .createServerAction()
+  .input(object({ documentId: string() }))
+  .handler(async ({ ctx, input }) => {
+    try {
+      const doc = await getDocumentByIdUseCase(input.documentId)
+      if (!doc) {
+        return { message: 'Document not found', error: true }
+      }
+      if (doc.userId !== ctx.user.id) {
+        return { message: 'You are not authorized to update this document', error: true }
+      }
+
+      const childrens = await getUserDocumentsByParentDocumentIdUseCase({
+        userId: ctx.user.id as string,
+        parentDocumentId: input.documentId,
+      })
+
+      for (const child of childrens) {
+        await updateDocumentUseCase({
+          id: child.id,
+          parentDocumentId: null,
+        })
+      }
+
+      await deleteDocumentUseCase({
+        id: input.documentId,
+      })
+
+      return { success: true, message: 'Document deleted successfully!', error: null }
+    } catch (error) {
+      return { message: 'Failed to delete document', error }
     }
   })
