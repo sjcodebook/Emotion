@@ -28,7 +28,13 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
     queryKey: QueryKeyFactory.getDocumentByIdAction(params.documentId as string),
   })
 
-  if (isLoading || isRefetching) return <div>Loading...</div>
+  if (isLoading || isRefetching) {
+    return (
+      <nav className='bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full flex items-center'>
+        <Title.Skeleton />
+      </nav>
+    )
+  }
 
   if (document?.error) {
     return <div>{document.message}</div>
