@@ -17,6 +17,7 @@ import { useQueryClient } from '@tanstack/react-query'
 
 import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 import { useSearch } from '@/hooks/use-search'
+import { useSettings } from '@/hooks/use-settings'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 
@@ -27,7 +28,8 @@ import TrashBox from './trash-box'
 import { createDocumentAction } from '../actions'
 
 export const Navigation = () => {
-  const onOpen = useSearch((state) => state.onOpen)
+  const onOpenSearch = useSearch((state) => state.onOpen)
+  const onOpenSettings = useSettings((state) => state.onOpen)
   const queryClient = useQueryClient()
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
@@ -151,8 +153,8 @@ export const Navigation = () => {
         </div>
         <div>
           <UserItem />
-          <Item label='Search' icon={Search} isSearch onClick={onOpen} />
-          <Item label='Settings' icon={Settings} onClick={() => {}} />
+          <Item label='Search' icon={Search} isSearch onClick={onOpenSearch} />
+          <Item label='Settings' icon={Settings} onClick={onOpenSettings} />
           <Item onClick={handleDocumentCreation} label='New Page' icon={PlusCircle} />
         </div>
         <div className='mt-4'>

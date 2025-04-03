@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/providers/theme-provider'
 import ReactQueryProvider from '@/providers/react-query'
 import SessionProvider from '@/providers/session-provider'
+import ModalProvider from '@/providers/modal-provider'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -35,6 +36,7 @@ export default function RootLayout({
           <SessionProvider>
             <ReactQueryProvider>
               {children}
+              <ModalProvider />
               <Toaster richColors />
             </ReactQueryProvider>
           </SessionProvider>
