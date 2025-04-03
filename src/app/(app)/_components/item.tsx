@@ -82,7 +82,7 @@ const Item = ({
         onExpand?.()
       }
 
-      router.push(`/documents/${data?.data?.id}}`)
+      router.push(`/dashboard/${data?.data?.id}}`)
     } catch (error) {
       toast.dismiss()
       console.error('Error creating document:', error)

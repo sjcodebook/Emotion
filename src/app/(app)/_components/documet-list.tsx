@@ -39,7 +39,7 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
   }
 
   const onRedirect = (documentId: string) => {
-    router.push(`/documents/${documentId}`)
+    router.push(`/dashboard/${documentId}`)
   }
 
   if ((!isLoading || !isRefetching) && allDocuments?.data?.length === 0 && level === 0) {

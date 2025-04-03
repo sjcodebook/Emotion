@@ -38,7 +38,7 @@ const TrashBox = () => {
   }, [allDocuments, search])
 
   const onClick = (documentId: string) => {
-    router.push(`/documents/${documentId}`)
+    router.push(`/dashboard/${documentId}`)
   }
 
   const onRestore = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>, documentId: string) => {
@@ -60,7 +60,7 @@ const TrashBox = () => {
       toast.success('Document restored successfully!')
       queryClient.refetchQueries()
 
-      router.push(`/documents/${documentId}}`)
+      router.push(`/dashboard/${documentId}}`)
     } catch (error) {
       toast.dismiss()
       console.error('Error restoring document:', error)
@@ -89,7 +89,7 @@ const TrashBox = () => {
       })
 
       if (params.documentId === documentId) {
-        router.push('/documents')
+        router.push('/dashboard')
       }
     } catch (error) {
       toast.dismiss()
