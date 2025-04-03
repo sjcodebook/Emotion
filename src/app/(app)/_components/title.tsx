@@ -1,13 +1,19 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
+import { useServerAction } from 'zsa-react'
+import { useDebounceCallback } from 'usehooks-ts'
+import { useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
 import { documentSchema } from '@/zod-schemas/documents'
 
+import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
+import { useLimitQuery } from '@/hooks/use-limit-query'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
+import { updateDocumentAction } from '../actions'
 interface TitleProps {
   initialData?: z.infer<typeof documentSchema>
 }
@@ -16,10 +22,46 @@ const Title = ({ initialData }: TitleProps) => {
   const [title, setTitle] = useState(initialData?.title || 'Untitled Document')
   const [isEditing, setIsEditing] = useState(false)
 
+  const addQuery = useLimitQuery({
+    limitDuration: 300,
+  })
+
   const inputRef = useRef<HTMLInputElement>(null)
+  const queryClient = useQueryClient()
+
+  const { execute: updateDoc } = useServerAction(updateDocumentAction)
+
+  const updateData = useCallback(async () => {
+    if (isEditing && initialData?.title !== title && title.trim().length !== 0) {
+      await updateDoc({
+        id: initialData?.id,
+        title,
+      })
+      await queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(
+          initialData?.parentDocumentId as string
+        ),
+      })
+    }
+  }, [
+    initialData?.id,
+    initialData?.parentDocumentId,
+    initialData?.title,
+    isEditing,
+    queryClient,
+    title,
+    updateDoc,
+  ])
+
+  const debouncedUpdate = useDebounceCallback(updateData, 300)
+
+  useEffect(() => {
+    if (title.trim().length !== 0 && initialData?.title !== title) {
+      addQuery(debouncedUpdate)
+    }
+  }, [addQuery, debouncedUpdate, initialData?.title, title, updateData])
 
   const enableInput = () => {
-    setTitle(initialData?.title || 'Untitled Document')
     setIsEditing(true)
     setTimeout(() => {
       inputRef.current?.focus()
@@ -31,7 +73,7 @@ const Title = ({ initialData }: TitleProps) => {
     setIsEditing(false)
   }
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
 
@@ -56,7 +98,7 @@ const Title = ({ initialData }: TitleProps) => {
         />
       ) : (
         <Button onClick={enableInput} variant='ghost' size='sm' className='font-normal h-auto p-1'>
-          <span className='truncate'>{initialData?.title}</span>
+          <span className='truncate'>{title}</span>
         </Button>
       )}
     </div>

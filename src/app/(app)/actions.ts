@@ -138,7 +138,7 @@ export const archiveDocumentsAction = authenticatedAction
         return { message: 'Document not found', error: true }
       }
       if (doc.userId !== ctx.user.id) {
-        return { message: 'You are not authorized to update this document', error: true }
+        return { message: 'You are not authorized to archive this document', error: true }
       }
 
       const recursiveArchive = async (parentDocumentId: string) => {
@@ -179,7 +179,7 @@ export const restoreArchivedDocumentsAction = authenticatedAction
         return { message: 'Document not found', error: true }
       }
       if (doc.userId !== ctx.user.id) {
-        return { message: 'You are not authorized to update this document', error: true }
+        return { message: 'You are not authorized to restore this document', error: true }
       }
 
       const recursiveRestoreArchive = async (id: string) => {
@@ -221,6 +221,38 @@ export const restoreArchivedDocumentsAction = authenticatedAction
     }
   })
 
+export const updateDocumentAction = authenticatedAction
+  .createServerAction()
+  .input(documentSchema)
+  .handler(async ({ ctx, input }) => {
+    try {
+      const doc = await getDocumentByIdUseCase(input.id as string)
+      if (!doc) {
+        return { message: 'Document not found', error: true }
+      }
+      if (doc.userId !== ctx.user.id) {
+        return { message: 'You are not authorized to update this document', error: true }
+      }
+
+      const updatedDoc = await updateDocumentUseCase({
+        id: input.id as string,
+        title: input.title ?? doc.title,
+        content: input.content ?? doc.content,
+        icon: input.icon ?? doc.icon,
+        coverImage: input.coverImage ?? doc.coverImage,
+      })
+
+      return {
+        success: true,
+        message: 'Document updated successfully!',
+        data: updatedDoc,
+        error: null,
+      }
+    } catch (error) {
+      return { message: 'Failed to update document', error }
+    }
+  })
+
 export const deleteDocumentAction = authenticatedAction
   .createServerAction()
   .input(object({ documentId: string() }))
@@ -231,7 +263,7 @@ export const deleteDocumentAction = authenticatedAction
         return { message: 'Document not found', error: true }
       }
       if (doc.userId !== ctx.user.id) {
-        return { message: 'You are not authorized to update this document', error: true }
+        return { message: 'You are not authorized to delete this document', error: true }
       }
 
       const childrens = await getUserDocumentsByParentDocumentIdUseCase({

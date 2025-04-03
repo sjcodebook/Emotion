@@ -96,11 +96,6 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
           )}
         </>
       )}
-      {isRefetching && (
-        <>
-          <Item.Skeleton level={level} />
-        </>
-      )}
     </>
   )
 }

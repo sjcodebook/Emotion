@@ -50,6 +50,7 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
               id: document?.data?.id,
               title: document?.data?.title,
               icon: document?.data?.icon,
+              parentDocumentId: document?.data?.parentDocumentId,
             }}
           />
         </div>
