@@ -1,7 +1,7 @@
 'use client'
 
 import { ComponentRef, useEffect, useRef, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import {
   ChevronsLeft,
   MenuIcon,
@@ -25,9 +25,11 @@ import UserItem from './user-item'
 import Item from './item'
 import DocumentList from './documet-list'
 import TrashBox from './trash-box'
+import Navbar from './navbar'
 import { createDocumentAction } from '../actions'
 
 export const Navigation = () => {
+  const params = useParams()
   const onOpenSearch = useSearch((state) => state.onOpen)
   const onOpenSettings = useSettings((state) => state.onOpen)
   const queryClient = useQueryClient()
@@ -187,15 +189,19 @@ export const Navigation = () => {
           isResetting && 'transition-all ease-in-out duration-300',
           isMobile && 'left-0 w-full'
         )}>
-        <nav className='bg-transparent px-3 py-2 w-full'>
-          {isCollapsed && (
-            <MenuIcon
-              onClick={resetWidth}
-              role='button'
-              className='h-6 w-6 text-muted-foreground cursor-pointer'
-            />
-          )}
-        </nav>
+        {!!params.documentId ? (
+          <Navbar isCollapsed={isCollapsed} onResetWidth={resetWidth} />
+        ) : (
+          <nav className='bg-transparent px-3 py-2 w-full'>
+            {isCollapsed && (
+              <MenuIcon
+                onClick={resetWidth}
+                role='button'
+                className='h-6 w-6 text-muted-foreground cursor-pointer'
+              />
+            )}
+          </nav>
+        )}
       </div>
     </>
   )

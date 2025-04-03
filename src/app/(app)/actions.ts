@@ -1,7 +1,7 @@
 'use server'
 
-import { authenticatedAction } from '@/lib/safe-action'
-import { signOut } from '@/lib/auth'
+import { authenticatedAction, unauthenticatedAction } from '@/lib/safe-action'
+import { signOut, auth } from '@/lib/auth'
 
 import {
   getDocumentByIdUseCase,
@@ -17,6 +17,41 @@ import { object, string } from 'zod'
 export const signOutAction = authenticatedAction.createServerAction().handler(async () => {
   await signOut()
 })
+
+export const getDocumentByIdAction = unauthenticatedAction
+  .createServerAction()
+  .input(
+    object({
+      documentId: string(),
+    })
+  )
+  .handler(async ({ input }) => {
+    try {
+      const doc = await getDocumentByIdUseCase(input.documentId)
+
+      if (!doc) {
+        return { message: 'Document not found', error: true }
+      }
+
+      if (doc.isPublished && !doc.isArchived) {
+        return { success: true, message: 'Document found successfully', error: null, data: doc }
+      }
+
+      const session = await auth()
+
+      if (!session?.user) {
+        return { message: 'Not authenticated', error: true }
+      }
+
+      if (doc.userId !== session.user.id) {
+        return { message: 'You are not authorized to view this document', error: true }
+      }
+
+      return { success: true, data: doc, error: null }
+    } catch (error) {
+      return { message: 'Failed to get document', error }
+    }
+  })
 
 export const getCurrentUserAllDocumentsAction = authenticatedAction
   .createServerAction()
@@ -83,7 +118,7 @@ export const createDocumentAction = authenticatedAction
   .handler(async ({ ctx, input }) => {
     try {
       const data = await createDocumentUseCase({
-        title: input.title,
+        title: input.title ?? 'Untitled Document',
         parentDocumentId: input.parentDocumentId ?? null,
         userId: ctx.user.id as string,
       })
