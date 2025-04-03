@@ -27,7 +27,7 @@ import TrashBox from './trash-box'
 import { createDocumentAction } from '../actions'
 
 export const Navigation = () => {
-  const search = useSearch()
+  const onOpen = useSearch((state) => state.onOpen)
   const queryClient = useQueryClient()
   const pathname = usePathname()
   const isMobile = useMediaQuery('(max-width: 768px)')
@@ -151,7 +151,7 @@ export const Navigation = () => {
         </div>
         <div>
           <UserItem />
-          <Item label='Search' icon={Search} isSearch onClick={search.onOpen} />
+          <Item label='Search' icon={Search} isSearch onClick={onOpen} />
           <Item label='Settings' icon={Settings} onClick={() => {}} />
           <Item onClick={handleDocumentCreation} label='New Page' icon={PlusCircle} />
         </div>
