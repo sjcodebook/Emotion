@@ -9,6 +9,7 @@ import { getDocumentByIdAction } from '../actions'
 
 import ArchiveBanner from './archive-banner'
 import Title from './title'
+import Menu from './menu'
 
 interface NavbarProps {
   isCollapsed: boolean
@@ -28,8 +29,11 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
 
   if (isLoading) {
     return (
-      <nav className='bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full flex items-center'>
+      <nav className='bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full flex items-center justify-between'>
         <Title.Skeleton />
+        <div className='flex items-center gap-x-2'>
+          <Menu.Skeleton />
+        </div>
       </nav>
     )
   }
@@ -57,6 +61,11 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
               parentDocumentId: document?.data?.parentDocumentId,
             }}
           />
+          {!document?.data?.isArchived && (
+            <div className='flex items-center gap-x-2'>
+              <Menu documentId={document?.data?.id as string} />
+            </div>
+          )}
         </div>
       </nav>
       {document?.data?.isArchived && <ArchiveBanner documentId={document.data.id} />}
