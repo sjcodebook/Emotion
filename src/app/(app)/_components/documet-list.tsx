@@ -42,7 +42,7 @@ const DocumentList = ({ parentDocumentId, level = 0 }: DocumentListProps) => {
     router.push(`/dashboard/${documentId}`)
   }
 
-  if ((!isLoading || !isRefetching) && allDocuments?.data?.length === 0 && level === 0) {
+  if (!isLoading && allDocuments?.data?.length === 0 && level === 0) {
     return (
       <p className='pl-4 text-sm font-medium text-muted-foreground/80'>
         Create a new page to get

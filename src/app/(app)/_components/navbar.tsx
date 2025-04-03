@@ -7,6 +7,7 @@ import { QueryKeyFactory, useServerActionQuery } from '@/hooks/use-server-action
 
 import { getDocumentByIdAction } from '../actions'
 
+import ArchiveBanner from './archive-banner'
 import Title from './title'
 
 interface NavbarProps {
@@ -17,18 +18,15 @@ interface NavbarProps {
 const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
   const params = useParams()
 
-  const {
-    isLoading,
-    isRefetching,
-    data: document,
-  } = useServerActionQuery(getDocumentByIdAction, {
+  const { isLoading, data: document } = useServerActionQuery(getDocumentByIdAction, {
     input: {
       documentId: params.documentId as string,
     },
     queryKey: QueryKeyFactory.getDocumentByIdAction(params.documentId as string),
+    enabled: !!params.documentId,
   })
 
-  if (isLoading || isRefetching) {
+  if (isLoading) {
     return (
       <nav className='bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full flex items-center'>
         <Title.Skeleton />
@@ -61,6 +59,7 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
           />
         </div>
       </nav>
+      {document?.data?.isArchived && <ArchiveBanner documentId={document.data.id} />}
     </>
   )
 }
