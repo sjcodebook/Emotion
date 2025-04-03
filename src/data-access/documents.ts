@@ -12,20 +12,6 @@ export async function getDocumentById(documentId: string) {
   return document
 }
 
-export async function getUserArchivedDocuments(userId: string) {
-  const documents = await db.document.findMany({
-    where: {
-      userId,
-      isArchived: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  })
-
-  return documents
-}
-
 export interface GetUserDocumentsByParentDocumentIdInterface
   extends Omit<Partial<Document>, 'userId' | 'parentDocumentId'> {
   userId: string
@@ -50,10 +36,14 @@ export async function getUserDocumentsByParentDocumentId({
   return documents
 }
 
-export async function getDocumentsByUserId(userId: string) {
+export interface GetDocumentsByUserIdInterface extends Omit<Partial<Document>, 'userId'> {
+  userId: string
+}
+export async function getDocumentsByUserId({ userId, ...data }: GetDocumentsByUserIdInterface) {
   const documents = await db.document.findMany({
     where: {
       userId,
+      ...data,
     },
     orderBy: {
       createdAt: 'desc',

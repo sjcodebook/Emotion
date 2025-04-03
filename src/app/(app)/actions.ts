@@ -10,7 +10,6 @@ import {
   deleteDocumentUseCase,
   getDocumentsByUserIdUseCase,
   getUserDocumentsByParentDocumentIdUseCase,
-  getUserArchivedDocumentsUseCase,
 } from '@/use-cases/documents'
 import { documentSchema } from '@/zod-schemas/documents'
 import { object, string } from 'zod'
@@ -19,14 +18,28 @@ export const signOutAction = authenticatedAction.createServerAction().handler(as
   await signOut()
 })
 
-export const getCurrentUserDocumentsAction = authenticatedAction
+export const getCurrentUserAllDocumentsAction = authenticatedAction
   .createServerAction()
   .handler(async ({ ctx }) => {
     try {
-      const userDocs = await getDocumentsByUserIdUseCase(ctx.user.id as string)
+      const userDocs = await getDocumentsByUserIdUseCase({ userId: ctx.user.id as string })
       return { success: true, data: userDocs, error: null }
     } catch (error) {
       return { message: 'Failed to get user documents', error }
+    }
+  })
+
+export const getCurrentUserUnArchivedDocumentsAction = authenticatedAction
+  .createServerAction()
+  .handler(async ({ ctx }) => {
+    try {
+      const userDocs = await getDocumentsByUserIdUseCase({
+        userId: ctx.user.id as string,
+        isArchived: false,
+      })
+      return { success: true, data: userDocs, error: null }
+    } catch (error) {
+      return { message: 'Failed to get user unarchived documents', error }
     }
   })
 
@@ -34,7 +47,10 @@ export const getCurrentUserArchivedDocumentsAction = authenticatedAction
   .createServerAction()
   .handler(async ({ ctx }) => {
     try {
-      const userDocs = await getUserArchivedDocumentsUseCase(ctx.user.id as string)
+      const userDocs = await getDocumentsByUserIdUseCase({
+        userId: ctx.user.id as string,
+        isArchived: true,
+      })
       return { success: true, data: userDocs, error: null }
     } catch (error) {
       return { message: 'Failed to get user archived documents', error }

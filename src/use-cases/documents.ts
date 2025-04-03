@@ -5,13 +5,13 @@ import {
   getUserDocumentsByParentDocumentId,
   updateDocument,
   deleteDocument,
-  getUserArchivedDocuments,
 } from '@/data-access/documents'
 
 import type {
   GetUserDocumentsByParentDocumentIdInterface,
   CreateDocumentInterface,
   UpdateDocumentInterface,
+  GetDocumentsByUserIdInterface,
 } from '@/data-access/documents'
 
 export async function getUserDocumentsByParentDocumentIdUseCase({
@@ -32,13 +32,11 @@ export async function getDocumentByIdUseCase(documentId: string) {
   return doc
 }
 
-export async function getUserArchivedDocumentsUseCase(userId: string) {
-  const doc = await getUserArchivedDocuments(userId)
-  return doc
-}
-
-export async function getDocumentsByUserIdUseCase(userId: string) {
-  const docs = await getDocumentsByUserId(userId)
+export async function getDocumentsByUserIdUseCase({
+  userId,
+  ...rest
+}: GetDocumentsByUserIdInterface) {
+  const docs = await getDocumentsByUserId({ userId, ...rest })
   return docs
 }
 
