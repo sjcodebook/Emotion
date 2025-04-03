@@ -71,6 +71,9 @@ const Title = ({ initialData }: TitleProps) => {
 
   const disableInput = () => {
     setIsEditing(false)
+    if (title.trim().length === 0) {
+      setTitle(initialData?.title ?? 'Untitled Document')
+    }
   }
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
