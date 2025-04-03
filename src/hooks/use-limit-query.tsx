@@ -17,7 +17,6 @@ export const useLimitQuery = ({ limitDuration = 100 }: { limitDuration?: number 
 
     try {
       latestQuery()
-      console.log('Executing latest query')
     } catch (error) {
       console.error('Error executing query:', error)
     }
