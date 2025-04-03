@@ -29,7 +29,7 @@ const Dashboard = () => {
       }
 
       toast.success('Document created successfully!')
-      queryClient.refetchQueries({
+      await queryClient.refetchQueries({
         queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(),
       })
     } catch (error) {

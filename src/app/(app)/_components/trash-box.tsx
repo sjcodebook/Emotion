@@ -58,7 +58,7 @@ const TrashBox = () => {
       }
 
       toast.success('Document restored successfully!')
-      queryClient.refetchQueries()
+      await queryClient.refetchQueries()
 
       router.push(`/dashboard/${documentId}}`)
     } catch (error) {
@@ -84,7 +84,7 @@ const TrashBox = () => {
       }
 
       toast.success('Document deleted successfully!')
-      queryClient.refetchQueries({
+      await queryClient.refetchQueries({
         queryKey: QueryKeyFactory.getCurrentUserArchivedDocumentsAction(),
       })
 

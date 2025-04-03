@@ -123,7 +123,7 @@ export const Navigation = () => {
         return
       }
       toast.success('Document created successfully!')
-      queryClient.refetchQueries({
+      await queryClient.refetchQueries({
         queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(),
       })
     } catch (error) {

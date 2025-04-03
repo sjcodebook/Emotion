@@ -74,7 +74,7 @@ const Item = ({
       }
 
       toast.success('Document created successfully!')
-      queryClient.refetchQueries({
+      await queryClient.refetchQueries({
         queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(id),
       })
 
@@ -82,7 +82,7 @@ const Item = ({
         onExpand?.()
       }
 
-      router.push(`/dashboard/${data?.data?.id}}`)
+      router.push(`/dashboard/${data?.data?.id}`)
     } catch (error) {
       toast.dismiss()
       console.error('Error creating document:', error)
@@ -107,7 +107,7 @@ const Item = ({
       }
 
       toast.success('Document archived successfully!')
-      queryClient.refetchQueries()
+      await queryClient.refetchQueries()
     } catch (error) {
       toast.dismiss()
       console.error('Error archiving document:', error)
