@@ -69,11 +69,12 @@ const Title = ({ initialData }: TitleProps) => {
     }, 0)
   }
 
-  const disableInput = () => {
-    setIsEditing(false)
+  const disableInput = async () => {
     if (title.trim().length === 0) {
       setTitle(initialData?.title ?? 'Untitled Document')
     }
+    await debouncedUpdate()
+    setIsEditing(false)
   }
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +82,7 @@ const Title = ({ initialData }: TitleProps) => {
   }
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.key === 'Escape') {
       disableInput()
     }
   }
