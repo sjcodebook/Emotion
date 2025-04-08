@@ -1,14 +1,16 @@
 'use client'
 
 import Image from 'next/image'
+import { ImageIcon, X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+
 import { Button } from './ui/button'
-import { ImageIcon, X } from 'lucide-react'
+import { Skeleton } from './ui/skeleton'
 
 interface CoverImageProps {
   url: string
-  preview: boolean
+  preview?: boolean
 }
 
 const Cover = ({ url, preview }: CoverImageProps) => {
@@ -40,3 +42,7 @@ const Cover = ({ url, preview }: CoverImageProps) => {
 }
 
 export default Cover
+
+Cover.Skeleton = function CoverSkeleton() {
+  return <Skeleton className='w-full h-[12vh]' />
+}
