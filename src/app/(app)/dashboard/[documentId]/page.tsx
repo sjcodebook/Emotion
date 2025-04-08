@@ -15,7 +15,7 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
   const { documentId } = use(params)
   const { isLoading, data: document } = useServerActionQuery(getDocumentByIdAction, {
     input: {
-      documentId: documentId,
+      documentId,
     },
     queryKey: QueryKeyFactory.getDocumentByIdAction(documentId),
   })
@@ -42,6 +42,7 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
             title: document.data.title,
             content: document.data.content,
             coverImage: document.data.coverImage,
+            icon: document.data.icon,
           }}
           preview={false}
         />

@@ -90,15 +90,29 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
     }
   }
 
+  const onIconSelect = async (icon: string) => {
+    await updateDoc({
+      id: initialData?.id,
+      icon,
+    })
+  }
+
+  const onRemoveIcon = async () => {
+    await updateDoc({
+      id: initialData?.id,
+      icon: null,
+    })
+  }
+
   return (
     <div className='pl-[54px] group relative'>
       {!!initialData?.icon && !preview && (
         <div className='flex items-center gap-x-2 group/icon pt-6'>
-          <IconPicker onChange={() => {}}>
+          <IconPicker onChange={onIconSelect}>
             <p className='text-6xl hover:opacity-75 transition'>{initialData.icon}</p>
           </IconPicker>
           <Button
-            onClick={() => {}}
+            onClick={onRemoveIcon}
             variant='outline'
             size='icon'
             className='rounded-full text-muted-foreground text-xs opacity-0 group-hover/icon:opacity-100 transition'>
@@ -109,7 +123,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
       {!!initialData?.icon && preview && <p className='text-6xl pt-6'>{initialData.icon}</p>}
       <div className='opacity-0 group-hover:opacity-100 flex items-center gap-x-1 py-4'>
         {!initialData?.icon && !preview && (
-          <IconPicker onChange={() => {}} asChild>
+          <IconPicker onChange={onIconSelect} asChild>
             <Button variant='outline' size='sm' className='text-muted-foreground text-xs'>
               <Smile className='h-4 w-4 mr-2' />
               Add icon
