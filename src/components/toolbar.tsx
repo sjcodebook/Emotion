@@ -11,6 +11,7 @@ import TextareaAutosize from 'react-textarea-autosize'
 
 import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 import { useLimitQuery } from '@/hooks/use-limit-query'
+import { useCoverImage } from '@/hooks/use-cover-image'
 
 import { updateDocumentAction } from '../app/(app)/actions'
 
@@ -64,6 +65,8 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
       addQuery(debouncedUpdate)
     }
   }, [addQuery, debouncedUpdate, initialData?.title, value, updateData])
+
+  const coverImage = useCoverImage()
 
   const enableInput = () => {
     if (preview) return
@@ -131,7 +134,11 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
           </IconPicker>
         )}
         {!initialData?.coverImage && !preview && (
-          <Button variant='outline' size='sm' className='text-muted-foreground text-xs'>
+          <Button
+            onClick={coverImage.onOpen}
+            variant='outline'
+            size='sm'
+            className='text-muted-foreground text-xs'>
             <ImageIcon className='h-4 w-4 mr-2' />
             Add cover image
           </Button>
