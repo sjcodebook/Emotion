@@ -6,6 +6,7 @@ import { useServerActionQuery, QueryKeyFactory } from '@/hooks/use-server-action
 
 import { getDocumentByIdAction } from '../../actions'
 import Toolbar from '@/components/toolbar'
+import Cover from '@/components/cover'
 
 interface DocumentIdPageParams {
   documentId: string
@@ -35,7 +36,7 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
   return (
     <div className='pb-40'>
       <div className='md:max-w-3xl lg:max-w-4xl mx-auto'>
-        <div className='h-[35vh]' />
+        <Cover url={document.data.coverImage} />
         <Toolbar
           initialData={{
             id: document.data.id,
