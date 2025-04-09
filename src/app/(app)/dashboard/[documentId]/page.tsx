@@ -1,8 +1,11 @@
 'use client'
 
-import { use } from 'react'
+import { use, useCallback, useMemo } from 'react'
+import dynamic from 'next/dynamic'
+import { useServerAction } from 'zsa-react'
 
 import { getDocumentByIdAction } from '../../actions'
+import { updateDocumentAction } from '../../actions'
 
 import { useServerActionQuery, QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 
@@ -15,6 +18,13 @@ interface DocumentIdPageParams {
 }
 
 const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) => {
+  const Editor = useMemo(
+    () =>
+      dynamic(() => import('@/components/editor'), {
+        ssr: false,
+      }),
+    []
+  )
   const { documentId } = use(params)
   const { isLoading, data: document } = useServerActionQuery(getDocumentByIdAction, {
     input: {
@@ -22,6 +32,18 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
     },
     queryKey: QueryKeyFactory.getDocumentByIdAction(documentId),
   })
+
+  const { execute: updateDoc } = useServerAction(updateDocumentAction)
+
+  const updateData = useCallback(
+    async (content: any) => {
+      await updateDoc({
+        id: documentId,
+        content: content,
+      })
+    },
+    [documentId, updateDoc]
+  )
 
   if (isLoading) {
     return (
@@ -60,6 +82,12 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
             icon: document.data.icon,
           }}
           preview={false}
+        />
+        <Editor
+          onChange={(content) => {
+            updateData(content)
+          }}
+          initialContent={document.data.content}
         />
       </div>
     </div>

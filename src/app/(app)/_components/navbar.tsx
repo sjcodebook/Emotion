@@ -10,6 +10,7 @@ import { getDocumentByIdAction } from '../actions'
 import ArchiveBanner from './archive-banner'
 import Title from './title'
 import Menu from './menu'
+import Publish from './publish'
 
 interface NavbarProps {
   isCollapsed: boolean
@@ -63,6 +64,7 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
           />
           {!document?.data?.isArchived && (
             <div className='flex items-center gap-x-2'>
+              <Publish initialData={document} />
               <Menu documentId={document?.data?.id as string} />
             </div>
           )}
