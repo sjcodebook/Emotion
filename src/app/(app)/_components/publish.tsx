@@ -111,6 +111,13 @@ const Publish = ({ initialData }: PublishProps) => {
                 {copied ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
               </Button>
             </div>
+            <Button
+              size='sm'
+              className='w-full text-xs'
+              disabled={isSubmitting}
+              onClick={onUnPublish}>
+              Unpublish
+            </Button>
           </div>
         ) : (
           <div className='flex flex-col items-center justify-center'>
