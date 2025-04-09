@@ -1,4 +1,4 @@
-import { object, string } from 'zod'
+import { boolean, object, string } from 'zod'
 
 export const documentSchema = object({
   id: string().optional(),
@@ -7,5 +7,5 @@ export const documentSchema = object({
   content: string().nullable().optional(),
   coverImage: string().nullable().optional(),
   icon: string().nullable().optional(),
-  isPublished: string().optional(),
+  isPublished: boolean().optional(),
 })

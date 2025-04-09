@@ -64,7 +64,16 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
           />
           {!document?.data?.isArchived && (
             <div className='flex items-center gap-x-2'>
-              <Publish initialData={document} />
+              <Publish
+                initialData={{
+                  id: document?.data?.id,
+                  title: document?.data?.title,
+                  icon: document?.data?.icon,
+                  coverImage: document?.data?.coverImage,
+                  isPublished: document?.data?.isPublished,
+                  parentDocumentId: document?.data?.parentDocumentId,
+                }}
+              />
               <Menu documentId={document?.data?.id as string} />
             </div>
           )}
