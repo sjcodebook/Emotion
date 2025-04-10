@@ -29,7 +29,7 @@ const RenderCard = ({ doc }: { doc: z.infer<typeof documentSchema> }) => {
   return (
     <Card
       key={doc.id}
-      className='cursor-pointer transition-all hover:shadow-md hover:-translate-y-1 p-0 w-45 h-50 overflow-hidden flex-shrink-0'
+      className='cursor-pointer transition-all hover:border-[2px] hover:border-gray-400 dark:hover:border-gray-600 p-0 w-45 h-50 overflow-hidden flex-shrink-0'
       onClick={() => handleCardClick(doc.id as string)}>
       <CardHeader className='p-0 w-full h-43 relative'>
         {doc.coverImage ? (
