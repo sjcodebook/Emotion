@@ -66,6 +66,7 @@
     "eslint-config-next": "15.2.1",
     "prisma": "^6.5.0",
     "supabase": "^2.20.3",
+    "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
     "typescript": "^5"
