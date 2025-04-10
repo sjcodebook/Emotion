@@ -23,7 +23,7 @@ const Title = ({ initialData }: TitleProps) => {
   const [isEditing, setIsEditing] = useState(false)
 
   const addQuery = useLimitQuery({
-    limitDuration: 300,
+    limitDuration: 200,
   })
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -36,6 +36,9 @@ const Title = ({ initialData }: TitleProps) => {
       await updateDoc({
         id: initialData?.id,
         title,
+      })
+      await queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getDocumentByIdAction(initialData?.id as string),
       })
       await queryClient.refetchQueries({
         queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(
@@ -54,6 +57,12 @@ const Title = ({ initialData }: TitleProps) => {
   ])
 
   const debouncedUpdate = useDebounceCallback(updateData, 300)
+
+  useEffect(() => {
+    if (initialData?.title) {
+      setTitle(initialData.title)
+    }
+  }, [initialData?.title])
 
   useEffect(() => {
     if (title.trim().length !== 0 && initialData?.title !== title) {

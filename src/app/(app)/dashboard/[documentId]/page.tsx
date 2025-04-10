@@ -3,6 +3,7 @@
 import { use, useCallback, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { useServerAction } from 'zsa-react'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { getDocumentByIdAction } from '../../actions'
 import { updateDocumentAction } from '../../actions'
@@ -27,6 +28,7 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
     []
   )
   const { documentId } = use(params)
+  const queryClient = useQueryClient()
   const { isLoading, data: document } = useServerActionQuery(getDocumentByIdAction, {
     input: {
       documentId,
@@ -41,6 +43,12 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
       await updateDoc({
         id: documentId,
         content: content,
+      })
+      await queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getDocumentByIdAction(documentId),
+      })
+      await queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getCurrentUserAllDocumentsAction(),
       })
     },
     [documentId, updateDoc]
@@ -81,6 +89,7 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
             content: document.data.content,
             coverImage: document.data.coverImage,
             icon: document.data.icon,
+            parentDocumentId: document.data.parentDocumentId,
           }}
           preview={false}
         />
@@ -91,7 +100,7 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
           initialContent={document.data.content}
         />
       </div>
-      <Kanban />
+      {/* <Kanban /> */}
     </div>
   )
 }

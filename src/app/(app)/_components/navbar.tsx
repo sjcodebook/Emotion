@@ -25,7 +25,6 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
       documentId: params.documentId as string,
     },
     queryKey: QueryKeyFactory.getDocumentByIdAction(params.documentId as string),
-    enabled: !!params.documentId,
   })
 
   if (isLoading) {

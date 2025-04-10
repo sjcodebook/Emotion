@@ -29,7 +29,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   const [value, setValue] = useState(initialData?.title)
 
   const addQuery = useLimitQuery({
-    limitDuration: 300,
+    limitDuration: 200,
   })
 
   const queryClient = useQueryClient()
@@ -46,6 +46,9 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
         queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(
           initialData?.parentDocumentId as string
         ),
+      })
+      await queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getDocumentByIdAction(initialData?.id as string),
       })
     }
   }, [
