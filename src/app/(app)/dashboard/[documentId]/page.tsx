@@ -3,7 +3,6 @@
 import { use, useCallback, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { useServerAction } from 'zsa-react'
-import { useQueryClient } from '@tanstack/react-query'
 
 import { getDocumentByIdAction } from '../../actions'
 import { updateDocumentAction } from '../../actions'
@@ -28,7 +27,6 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
     []
   )
   const { documentId } = use(params)
-  const queryClient = useQueryClient()
   const { isLoading, data: document } = useServerActionQuery(getDocumentByIdAction, {
     input: {
       documentId,
@@ -38,17 +36,11 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
 
   const { execute: updateDoc } = useServerAction(updateDocumentAction)
 
-  const updateData = useCallback(
+  const updateContent = useCallback(
     async (content: any) => {
       await updateDoc({
         id: documentId,
         content: content,
-      })
-      await queryClient.refetchQueries({
-        queryKey: QueryKeyFactory.getDocumentByIdAction(documentId),
-      })
-      await queryClient.refetchQueries({
-        queryKey: QueryKeyFactory.getCurrentUserAllDocumentsAction(),
       })
     },
     [documentId, updateDoc]
@@ -93,9 +85,10 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
           }}
           preview={false}
         />
+        <br />
         <Editor
           onChange={(content) => {
-            updateData(content)
+            updateContent(content)
           }}
           initialContent={document.data.content}
         />
