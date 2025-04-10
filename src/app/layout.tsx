@@ -15,7 +15,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Your connected workspace for wiki, docs & projects | Notion',
+  title: 'Your connected workspace for wiki, docs & projects | Emotion',
   description:
     "A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team.",
 }
