@@ -131,7 +131,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className='h-full p-6 mt-5 mx-10'>
+    <div className='h-full p-6 mt-6 mx-10'>
       <h1 className='text-3xl font-medium text-center'>Welcome back, {session?.user?.name}!</h1>
       <div className='flex flex-col items-start justify-between mt-10 gap-4'>
         <h2 className='text-lg font-medium text-muted-foreground'>Your Documents:</h2>
