@@ -130,6 +130,9 @@ export const Navigation = () => {
       await queryClient.refetchQueries({
         queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(),
       })
+      await queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getCurrentUserAllDocumentsAction(),
+      })
     } catch (error) {
       toast.dismiss()
       console.error('Error creating document:', error)
