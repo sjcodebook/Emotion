@@ -1,4 +1,4 @@
-import { boolean, date, object, string } from 'zod'
+import { boolean, date, object, string, enum as enum_ } from 'zod'
 
 export const documentSchema = object({
   id: string().optional(),
@@ -10,4 +10,5 @@ export const documentSchema = object({
   isPublished: boolean().optional(),
   createdAt: date().optional(),
   updatedAt: date().optional(),
+  type: enum_(['KANBAN', 'DOCUMENT']).optional(),
 })
