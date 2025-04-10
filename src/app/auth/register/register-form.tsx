@@ -73,7 +73,13 @@ const RegisterForm = ({ className, ...props }: React.ComponentPropsWithoutRef<'d
               <div className='grid gap-6'>
                 <div className='grid gap-2'>
                   <Label htmlFor='name'>Name</Label>
-                  <Input {...register('name')} id='name' type='text' required />
+                  <Input
+                    {...register('name')}
+                    id='name'
+                    type='text'
+                    placeholder='Jon Snow'
+                    required
+                  />
                   {errors.name && errors.name.message && (
                     <div className='bg-red-100 p-2 rounded-sm'>
                       <div className='text-sm text-red-500'>{errors.name.message}</div>
@@ -86,7 +92,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentPropsWithoutRef<'d
                     {...register('email')}
                     id='email'
                     type='email'
-                    placeholder='m@example.com'
+                    placeholder='jon.snow@knows-nothing.com'
                     required
                   />
                   {errors.email && errors.email.message && (
@@ -97,7 +103,13 @@ const RegisterForm = ({ className, ...props }: React.ComponentPropsWithoutRef<'d
                 </div>
                 <div className='grid gap-2'>
                   <Label htmlFor='password'>Password</Label>
-                  <Input {...register('password')} id='password' type='password' required />
+                  <Input
+                    {...register('password')}
+                    id='password'
+                    type='password'
+                    placeholder='********'
+                    required
+                  />
                   {errors.password && errors.password.message && (
                     <div className='bg-red-100 p-2 rounded-sm'>
                       <div className='text-sm text-red-500'>{errors.password.message}</div>
