@@ -11,8 +11,23 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix)
-  const isPublicRoute = publicRoutes.some((route) => nextUrl.pathname.startsWith(route))
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname)
+  const isPublicRoute = publicRoutes.some((route) => {
+    // Handle dynamic segments with any parameter name: [id], [slug], etc.
+    if (route.includes('[')) {
+      const dynamicRouteRegex = new RegExp(`^${route.replace(/\[.*?\]/g, '[^/]+')}$`)
+      return dynamicRouteRegex.test(nextUrl.pathname)
+    }
+    return nextUrl.pathname === route || nextUrl.pathname.startsWith(`${route}/`)
+  })
+
+  // Apply the same logic to auth routes if they can have dynamic segments
+  const isAuthRoute = authRoutes.some((route) => {
+    if (route.includes('[')) {
+      const dynamicRouteRegex = new RegExp(`^${route.replace(/\[.*?\]/g, '[^/]+')}$`)
+      return dynamicRouteRegex.test(nextUrl.pathname)
+    }
+    return nextUrl.pathname === route
+  })
 
   if (isApiAuthRoute) {
     return undefined

@@ -40,7 +40,7 @@ const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
   }
 
   if (document?.error) {
-    return <div>{document.message}</div>
+    return null
   }
 
   return (

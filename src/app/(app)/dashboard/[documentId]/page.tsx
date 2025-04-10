@@ -63,11 +63,11 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
   }
 
   if (document?.error) {
-    return <div>Something went wrong</div>
+    return <div className='h-full flex justify-center items-center'>{document?.message}</div>
   }
 
   if (!document?.data) {
-    return <div>Document not found</div>
+    return <div className='flex justify-center items-center'>Document not found</div>
   }
 
   return (

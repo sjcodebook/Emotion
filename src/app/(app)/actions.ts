@@ -30,26 +30,26 @@ export const getDocumentByIdAction = unauthenticatedAction
       const doc = await getDocumentByIdUseCase(input.documentId)
 
       if (!doc) {
-        return { message: 'Document not found', error: true }
+        return { message: 'Document not found.', error: true }
       }
 
       if (doc.isPublished && !doc.isArchived) {
-        return { success: true, message: 'Document found successfully', error: null, data: doc }
+        return { success: true, message: 'Document found successfully.', error: null, data: doc }
       }
 
       const session = await auth()
 
       if (!session?.user) {
-        return { message: 'Not authenticated', error: true }
+        return { message: 'Not authenticated.', error: true }
       }
 
       if (doc.userId !== session.user.id) {
-        return { message: 'You are not authorized to view this document', error: true }
+        return { message: 'You are not authorized to view this document.', error: true }
       }
 
       return { success: true, data: doc, error: null }
     } catch (error) {
-      return { message: 'Failed to get document', error }
+      return { message: 'Failed to get document.', error }
     }
   })
 
@@ -60,7 +60,7 @@ export const getCurrentUserAllDocumentsAction = authenticatedAction
       const userDocs = await getDocumentsByUserIdUseCase({ userId: ctx.user.id as string })
       return { success: true, data: userDocs, error: null }
     } catch (error) {
-      return { message: 'Failed to get user documents', error }
+      return { message: 'Failed to get user documents.', error }
     }
   })
 
@@ -74,7 +74,7 @@ export const getCurrentUserUnArchivedDocumentsAction = authenticatedAction
       })
       return { success: true, data: userDocs, error: null }
     } catch (error) {
-      return { message: 'Failed to get user unarchived documents', error }
+      return { message: 'Failed to get user unarchived documents.', error }
     }
   })
 
@@ -88,7 +88,7 @@ export const getCurrentUserArchivedDocumentsAction = authenticatedAction
       })
       return { success: true, data: userDocs, error: null }
     } catch (error) {
-      return { message: 'Failed to get user archived documents', error }
+      return { message: 'Failed to get user archived documents.', error }
     }
   })
 
@@ -108,7 +108,7 @@ export const getCurrentUserDocumentByParentDocumentIdAction = authenticatedActio
       })
       return { success: true, data: userDocs, error: null }
     } catch (error) {
-      return { message: 'Failed to get user documents by parent document id', error }
+      return { message: 'Failed to get user documents by parent document id.', error }
     }
   })
 
@@ -124,7 +124,7 @@ export const createDocumentAction = authenticatedAction
       })
       return { success: true, message: 'Document created successfully!', error: null, data }
     } catch (error) {
-      return { message: 'Failed to create document', error }
+      return { message: 'Failed to create document.', error }
     }
   })
 
@@ -135,10 +135,10 @@ export const archiveDocumentsAction = authenticatedAction
     try {
       const doc = await getDocumentByIdUseCase(input.parentDocumentId)
       if (!doc) {
-        return { message: 'Document not found', error: true }
+        return { message: 'Document not found.', error: true }
       }
       if (doc.userId !== ctx.user.id) {
-        return { message: 'You are not authorized to archive this document', error: true }
+        return { message: 'You are not authorized to archive this document.', error: true }
       }
 
       const recursiveArchive = async (parentDocumentId: string) => {
@@ -165,7 +165,7 @@ export const archiveDocumentsAction = authenticatedAction
 
       return { success: true, message: 'Document archived successfully!', error: null }
     } catch (error) {
-      return { message: 'Failed to archive document', error }
+      return { message: 'Failed to archive document.', error }
     }
   })
 
@@ -176,10 +176,10 @@ export const restoreArchivedDocumentsAction = authenticatedAction
     try {
       const doc = await getDocumentByIdUseCase(input.documentId)
       if (!doc) {
-        return { message: 'Document not found', error: true }
+        return { message: 'Document not found.', error: true }
       }
       if (doc.userId !== ctx.user.id) {
-        return { message: 'You are not authorized to restore this document', error: true }
+        return { message: 'You are not authorized to restore this document.', error: true }
       }
 
       const recursiveRestoreArchive = async (id: string) => {
@@ -217,7 +217,7 @@ export const restoreArchivedDocumentsAction = authenticatedAction
 
       return { success: true, message: 'Document restored successfully!', error: null }
     } catch (error) {
-      return { message: 'Failed to restore document', error }
+      return { message: 'Failed to restore document.', error }
     }
   })
 
@@ -228,10 +228,10 @@ export const updateDocumentAction = authenticatedAction
     try {
       const doc = await getDocumentByIdUseCase(input.id as string)
       if (!doc) {
-        return { message: 'Document not found', error: true }
+        return { message: 'Document not found.', error: true }
       }
       if (doc.userId !== ctx.user.id) {
-        return { message: 'You are not authorized to update this document', error: true }
+        return { message: 'You are not authorized to update this document.', error: true }
       }
 
       const updatedDoc = await updateDocumentUseCase({
@@ -249,7 +249,7 @@ export const updateDocumentAction = authenticatedAction
         error: null,
       }
     } catch (error) {
-      return { message: 'Failed to update document', error }
+      return { message: 'Failed to update document.', error }
     }
   })
 
@@ -260,10 +260,10 @@ export const deleteDocumentAction = authenticatedAction
     try {
       const doc = await getDocumentByIdUseCase(input.documentId)
       if (!doc) {
-        return { message: 'Document not found', error: true }
+        return { message: 'Document not found.', error: true }
       }
       if (doc.userId !== ctx.user.id) {
-        return { message: 'You are not authorized to delete this document', error: true }
+        return { message: 'You are not authorized to delete this document.', error: true }
       }
 
       const childrens = await getUserDocumentsByParentDocumentIdUseCase({
@@ -284,6 +284,6 @@ export const deleteDocumentAction = authenticatedAction
 
       return { success: true, message: 'Document deleted successfully!', error: null }
     } catch (error) {
-      return { message: 'Failed to delete document', error }
+      return { message: 'Failed to delete document.', error }
     }
   })
