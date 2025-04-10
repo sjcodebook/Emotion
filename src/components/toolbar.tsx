@@ -93,10 +93,16 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
     }
   }
 
-  const onIconSelect = async (icon: string) => {
+  const onIconSelect = async (icon: string, parentDocumentId: string) => {
     await updateDoc({
       id: initialData?.id,
       icon,
+    })
+    await queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getDocumentByIdAction(initialData?.id as string),
+    })
+    await queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(parentDocumentId),
     })
   }
 
@@ -111,7 +117,8 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
     <div className='pl-[54px] group relative'>
       {!!initialData?.icon && !preview && (
         <div className='flex items-center gap-x-2 group/icon pt-6'>
-          <IconPicker onChange={onIconSelect}>
+          <IconPicker
+            onChange={(icon) => onIconSelect(icon, initialData?.parentDocumentId as string)}>
             <p className='text-6xl hover:opacity-75 transition'>{initialData.icon}</p>
           </IconPicker>
           <Button
@@ -126,7 +133,9 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
       {!!initialData?.icon && preview && <p className='text-6xl pt-6'>{initialData.icon}</p>}
       <div className='opacity-0 group-hover:opacity-100 flex items-center gap-x-1 py-4'>
         {!initialData?.icon && !preview && (
-          <IconPicker onChange={onIconSelect} asChild>
+          <IconPicker
+            onChange={(icon) => onIconSelect(icon, initialData?.parentDocumentId as string)}
+            asChild>
             <Button variant='outline' size='sm' className='text-muted-foreground text-xs'>
               <Smile className='h-4 w-4 mr-2' />
               Add icon
