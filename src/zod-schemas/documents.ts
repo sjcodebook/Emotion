@@ -1,13 +1,13 @@
-import { boolean, object, string } from 'zod'
+import { boolean, date, object, string } from 'zod'
 
 export const documentSchema = object({
   id: string().optional(),
-  parentDocumentId: string().nullable().optional(),
   title: string().optional(),
   content: string().nullable().optional(),
+  parentDocumentId: string().nullable().optional(),
   coverImage: string().nullable().optional(),
   icon: string().nullable().optional(),
   isPublished: boolean().optional(),
-  createdAt: string().optional(),
-  updatedAt: string().optional(),
+  createdAt: date().optional(),
+  updatedAt: date().optional(),
 })

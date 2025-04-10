@@ -236,10 +236,7 @@ export const updateDocumentAction = authenticatedAction
 
       const updatedDoc = await updateDocumentUseCase({
         id: input.id as string,
-        title: input.title ?? doc.title,
-        content: input.content ?? doc.content,
-        icon: input.icon ?? doc.icon,
-        coverImage: input.coverImage ?? doc.coverImage,
+        ...input,
       })
 
       return {

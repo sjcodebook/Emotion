@@ -106,10 +106,16 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
     })
   }
 
-  const onRemoveIcon = async () => {
+  const onRemoveIcon = async (parentDocumentId: string) => {
     await updateDoc({
       id: initialData?.id,
       icon: null,
+    })
+    await queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getDocumentByIdAction(initialData?.id as string),
+    })
+    await queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(parentDocumentId),
     })
   }
 
@@ -122,7 +128,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
             <p className='text-6xl hover:opacity-75 transition'>{initialData.icon}</p>
           </IconPicker>
           <Button
-            onClick={onRemoveIcon}
+            onClick={() => onRemoveIcon(initialData?.parentDocumentId as string)}
             variant='outline'
             size='icon'
             className='rounded-full text-muted-foreground text-xs opacity-0 group-hover/icon:opacity-100 transition'>
