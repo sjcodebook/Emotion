@@ -8,4 +8,6 @@ export const documentSchema = object({
   coverImage: string().nullable().optional(),
   icon: string().nullable().optional(),
   isPublished: boolean().optional(),
+  createdAt: string().optional(),
+  updatedAt: string().optional(),
 })

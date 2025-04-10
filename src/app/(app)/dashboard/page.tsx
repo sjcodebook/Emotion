@@ -1,12 +1,15 @@
 'use client'
 
 import { useMemo } from 'react'
-import Image from 'next/image'
-import { useSession } from 'next-auth/react'
-import { PlusCircle } from 'lucide-react'
 import { toast } from 'sonner'
-import { useQueryClient } from '@tanstack/react-query'
+import { z } from 'zod'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { PlusCircle } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { useQueryClient } from '@tanstack/react-query'
+
+import { documentSchema } from '@/zod-schemas/documents'
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -16,10 +19,49 @@ import { QueryKeyFactory, useServerActionQuery } from '@/hooks/use-server-action
 
 import { createDocumentAction, getCurrentUserAllDocumentsAction } from '../actions'
 
+const RenderCard = ({ doc }: { doc: z.infer<typeof documentSchema> }) => {
+  const router = useRouter()
+
+  const handleCardClick = (documentId: string) => {
+    router.push(`/dashboard/${documentId}`)
+  }
+
+  return (
+    <Card
+      key={doc.id}
+      className='cursor-pointer transition-all hover:shadow-md hover:-translate-y-1 p-0 w-45 h-50 overflow-hidden flex-shrink-0'
+      onClick={() => handleCardClick(doc.id as string)}>
+      <CardHeader className='p-0 w-full h-43 relative'>
+        {doc.coverImage ? (
+          <Image src={doc.coverImage} alt={doc.title ?? ''} className='object-cover' fill />
+        ) : (
+          <div className='w-full h-full bg-gray-600 dark:bg-muted flex items-center justify-center'>
+            <Image
+              src='/assets/image/empty.webp'
+              height='80'
+              width='80'
+              alt='No cover'
+              className='opacity-50'
+            />
+          </div>
+        )}
+        <div className='absolute bottom-[-18px] left-3'>
+          <div className='text-3xl'>{doc?.icon ?? '📄'}</div>
+        </div>
+      </CardHeader>
+      <CardContent className='text-left pl-4 flex flex-col justify-between h-full'>
+        <h3 className='font-semibold truncate line-clamp-2 text-wrap'>{doc.title}</h3>
+        <p className='mt-2 mb-4 text-xs text-muted-foreground self-start'>
+          {doc.createdAt ? new Date(doc.createdAt).toLocaleDateString() : 'No date available'}
+        </p>
+      </CardContent>
+    </Card>
+  )
+}
+
 const Dashboard = () => {
   const { data: session } = useSession()
   const queryClient = useQueryClient()
-  const router = useRouter()
 
   const { isLoading, data: document } = useServerActionQuery(getCurrentUserAllDocumentsAction, {
     input: undefined,
@@ -63,10 +105,6 @@ const Dashboard = () => {
     }
   }
 
-  const handleCardClick = (documentId: string) => {
-    router.push(`/dashboard/${documentId}`)
-  }
-
   if (isLoading) {
     return (
       <div className='h-full flex items-center justify-center'>
@@ -99,35 +137,7 @@ const Dashboard = () => {
         <h2 className='text-lg font-medium text-muted-foreground'>Your Documents:</h2>
         <div className='flex gap-6 overflow-x-auto pb-4 w-full scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent'>
           {allUnArchivedDocuments?.map((doc) => (
-            <Card
-              key={doc.id}
-              className='cursor-pointer transition-all hover:shadow-md hover:-translate-y-1 p-0 w-45 h-50 overflow-hidden flex-shrink-0'
-              onClick={() => handleCardClick(doc.id)}>
-              <CardHeader className='p-0 w-full h-20 relative'>
-                {doc.coverImage ? (
-                  <Image src={doc.coverImage} alt={doc.title} className='object-cover' fill />
-                ) : (
-                  <div className='w-full h-full bg-muted flex items-center justify-center'>
-                    <Image
-                      src='/assets/image/empty.webp'
-                      height='80'
-                      width='80'
-                      alt='No cover'
-                      className='opacity-50'
-                    />
-                  </div>
-                )}
-                <div className='absolute bottom-[-18px] left-3'>
-                  <div className='text-3xl'>{doc?.icon ?? '📄'}</div>
-                </div>
-              </CardHeader>
-              <CardContent className='text-left pl-4'>
-                <h3 className='font-semibold truncate line-clamp-2 text-wrap'>{doc.title}</h3>
-                <p className='mt-2 text-xs text-muted-foreground'>
-                  {new Date(doc.createdAt).toLocaleDateString()}
-                </p>
-              </CardContent>
-            </Card>
+            <RenderCard key={doc.id} doc={doc as unknown as z.infer<typeof documentSchema>} />
           ))}
         </div>
       </div>
@@ -141,39 +151,9 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className='flex gap-6 overflow-x-auto pb-4 w-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent'>
-            {document.data
-              .filter((doc) => doc.isArchived)
-              .map((doc) => (
-                <Card
-                  key={doc.id}
-                  className='cursor-pointer transition-all hover:shadow-md hover:-translate-y-1 p-0 w-45 h-50 overflow-hidden flex-shrink-0'
-                  onClick={() => handleCardClick(doc.id)}>
-                  <CardHeader className='p-0 w-full h-20 relative'>
-                    {doc.coverImage ? (
-                      <Image src={doc.coverImage} alt={doc.title} className='object-cover' fill />
-                    ) : (
-                      <div className='w-full h-full bg-muted flex items-center justify-center'>
-                        <Image
-                          src='/assets/image/empty.webp'
-                          height='80'
-                          width='80'
-                          alt='No cover'
-                          className='opacity-50'
-                        />
-                      </div>
-                    )}
-                    <div className='absolute bottom-[-18px] left-3'>
-                      <div className='text-3xl'>{doc?.icon ?? '📄'}</div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className='text-left pl-4'>
-                    <h3 className='font-semibold truncate line-clamp-2 text-wrap'>{doc.title}</h3>
-                    <p className='mt-2 text-xs text-muted-foreground'>
-                      {new Date(doc.createdAt).toLocaleDateString()}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
+            {allArchivedDocuments?.map((doc) => (
+              <RenderCard key={doc.id} doc={doc as unknown as z.infer<typeof documentSchema>} />
+            ))}
           </div>
         )}
       </div>
