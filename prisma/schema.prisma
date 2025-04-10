@@ -64,18 +64,24 @@ model VerificationToken {
 }
 
 model Document {
-  id               String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamp(6)
-  title            String   @map("title")
-  userId           String   @map("user_id") @db.Uuid
-  isArchived       Boolean  @default(false) @map("is_archived")
-  parentDocumentId String?  @map("parent_document_id")
-  content          String?  @map("content")
-  coverImage       String?  @map("cover_image")
-  icon             String?  @map("icon")
-  isPublished      Boolean  @default(false) @map("is_published")
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamp(6)
+  title            String        @map("title")
+  userId           String        @map("user_id") @db.Uuid
+  isArchived       Boolean       @default(false) @map("is_archived")
+  parentDocumentId String?       @map("parent_document_id")
+  content          String?       @map("content")
+  coverImage       String?       @map("cover_image")
+  icon             String?       @map("icon")
+  isPublished      Boolean       @default(false) @map("is_published")
+  type             DocumentType? @map("type")
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("documents")
+}
+
+enum DocumentType {
+  DOCUMENT
+  KANBAN
 }
