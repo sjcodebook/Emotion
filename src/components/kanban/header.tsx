@@ -1,7 +1,21 @@
 import { Button } from '@/components/ui/button'
 import { CirclePlus, TrashIcon } from 'lucide-react'
 
-const KanbanHeader = ({ board, taskCount, handleBlockRemove, handleCardAdd }) => {
+import { BoardContent } from './board'
+
+interface KanbanHeaderProps {
+  board: BoardContent
+  taskCount: number
+  handleBlockRemove: (id: string) => void
+  handleCardAdd: (id: string) => void
+}
+
+const KanbanHeader = ({
+  board,
+  taskCount,
+  handleBlockRemove,
+  handleCardAdd,
+}: KanbanHeaderProps) => {
   return (
     <div className='flex items-center justify-between px-2 py-2'>
       <div className='flex items-center justify-center gap-x-2'>

@@ -15,15 +15,17 @@ import { Button } from '@/components/ui/button'
 import KanbanHeader from './header'
 import KanbanCard from './card'
 
-interface BoardContent {
+export interface Task {
+  id: string
+  title: string
+  createdAt: Date
+}
+
+export interface BoardContent {
   id: string
   name: string
   isHovered?: boolean
-  cards: {
-    id: string
-    title: string
-    createdAt: Date
-  }[]
+  cards: Task[]
 }
 
 const Kanban = ({
@@ -204,7 +206,7 @@ const Kanban = ({
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}>
                             <KanbanCard
-                              board={board}
+                              boardId={board.id}
                               task={task}
                               handleCardRemove={handleCardRemove}
                             />
