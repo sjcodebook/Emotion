@@ -1,64 +1,19 @@
 'use cleint'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import { PlusIcon } from 'lucide-react'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
-import { Button } from './ui/button'
-import { CirclePlus, PlusIcon, Trash, Trash2, TrashIcon } from 'lucide-react'
 
-const KanbanHeader = ({ board, taskCount, handleBlockRemove, handleCardAdd }) => {
-  return (
-    <div className='flex items-center justify-between px-2 py-2'>
-      <div className='flex items-center justify-center gap-x-2'>
-        <div className='bg-neutral-200 rounded-sm py-1 px-1.5'>
-          <h2 className='text-sm font-medium'>{board.name}</h2>
-        </div>
-        <div className='text-sm text-neutral-700 font-medium'>{taskCount}</div>
-      </div>
-      <div className='flex items-center justify-center'>
-        <Button
-          onClick={() => handleBlockRemove(board.id)}
-          variant='ghost'
-          size='icon'
-          className='size-8'>
-          <TrashIcon className='size-5 text-neutral-500' />
-        </Button>
-        <Button
-          onClick={() => {
-            handleCardAdd(board.id)
-          }}
-          variant='ghost'
-          size='icon'
-          className='size-8'>
-          <CirclePlus className='size-5 text-neutral-500' />
-        </Button>
-      </div>
-    </div>
-  )
-}
+import { cn } from '@/lib/utils'
 
-const KanbanCard = ({ board, task, handleCardRemove }) => {
-  return (
-    <div className='bg-white p-4 mb-2 rounded-lg shadow-md max-w-full hover:shadow-lg transition-shadow duration-200 ease-in-out hover:bg-gray-50 flex items-start justify-between gap-4'>
-      <div className='flex flex-col items-start justify-between gap-4'>
-        <div className='flex items-start justify-start gap-x-3 w-full'>
-          <p>📄</p>
-          <p className='line-clamp-5 font-medium text-md'>{task.title}</p>
-        </div>
-        <p className='text-muted-foreground text-xs'>December 15, 2024</p>
-      </div>
-      <div
-        className='mt-0.5 size-4 cursor-pointer'
-        onClick={() => {
-          handleCardRemove(board.id, task.id)
-        }}>
-        <Trash2 className='size-3.5 text-muted-foreground' />
-      </div>
-    </div>
-  )
-}
+import { Button } from '@/components/ui/button'
+
+import KanbanHeader from './header'
+import KanbanCard from './card'
 
 const Kanban = () => {
+  const [isDragging, setIsDragging] = useState(false)
   const [boards, setBoards] = useState([
     {
       id: uuidv4(),
@@ -144,7 +99,14 @@ const Kanban = () => {
     )
   }
 
+  const handleDragStart = () => {
+    setIsDragging(true)
+  }
+
   const handleDragEnd = (result: DropResult) => {
+    setIsDragging(false)
+    setBoards((prevBoards) => prevBoards.map((board) => ({ ...board, isHovered: false })))
+
     const { source, destination } = result
 
     // If there's no destination, do nothing
@@ -192,14 +154,36 @@ const Kanban = () => {
     })
   }
 
+  const handleDragUpdate = (update) => {
+    const { destination } = update
+
+    setBoards((prevBoards) =>
+      prevBoards.map((board) => {
+        if (destination && board.id === destination.droppableId) {
+          return { ...board, isHovered: true }
+        }
+        return { ...board, isHovered: false }
+      })
+    )
+  }
+
   return (
-    <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => {}}>
+    <DragDropContext
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragUpdate={handleDragUpdate}>
       <div className='flex overflow-x-auto min-h-[350px] scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-4'>
         {boards.map((board) => {
           return (
             <div
               key={board.id}
-              className='flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[280px] max-w-[280px] min-h-full'>
+              className={cn(
+                'flex-1 mx-2 p-1.5 rounded-md min-w-[280px] max-w-[280px] min-h-full transition-colors duration-200',
+                isDragging ? 'border-2 border-dashed bg-transparent' : 'border-none',
+                board.isHovered
+                  ? 'bg-blue-50 border-blue-300'
+                  : cn('border-neutral-300', !isDragging ? 'bg-muted' : 'bg-transparent')
+              )}>
               <KanbanHeader
                 board={board}
                 taskCount={board.cards.length}
@@ -229,6 +213,7 @@ const Kanban = () => {
                         )}
                       </Draggable>
                     ))}
+                    {provided.placeholder}
                   </div>
                 )}
               </Droppable>
