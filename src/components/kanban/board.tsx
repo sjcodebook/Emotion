@@ -14,6 +14,11 @@ import { Button } from '@/components/ui/button'
 
 import KanbanHeader from './header'
 import KanbanCard from './card'
+import { toast } from 'sonner'
+
+import { createDocumentAction } from '../../app/(app)/actions'
+import { useQueryClient } from '@tanstack/react-query'
+import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 
 export interface Task {
   id: string
@@ -35,6 +40,7 @@ const Kanban = ({
   document: z.infer<typeof documentSchema>
   onChange: (value: string) => void
 }) => {
+  const queryClient = useQueryClient()
   const [isDragging, setIsDragging] = useState(false)
   const [boards, setBoards] = useState<BoardContent[]>([])
 
@@ -65,25 +71,40 @@ const Kanban = ({
     setBoards((prev) => prev.filter((board) => board.id !== id))
   }
 
-  const handleCardAdd = (boardId: string) => {
+  const handleCardAdd = async (boardId: string) => {
+    toast.loading('Creating task...')
+    const [data, err] = await createDocumentAction({
+      title: 'Untitled Document',
+      parentDocumentId: document.id,
+    })
+    toast.dismiss()
+    if (err || data?.error || !data?.data) {
+      toast.error('Failed to create task. Please try again.')
+      return
+    }
+    toast.success('Task created successfully!')
+    const newTask = {
+      id: data.data?.id,
+      title: data.data?.title,
+      createdAt: data.data?.createdAt,
+    }
     setBoards((prev) =>
       prev.map((board) => {
         if (board.id === boardId) {
           return {
             ...board,
-            cards: [
-              ...board.cards,
-              {
-                id: uuidv4(),
-                title: 'New Task',
-                createdAt: new Date(),
-              },
-            ],
+            cards: [...board.cards, newTask],
           }
         }
         return board
       })
     )
+    await queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(document.id),
+    })
+    await queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getCurrentUserAllDocumentsAction(),
+    })
   }
 
   const handleCardRemove = (boardId: string, taskId: string) => {
@@ -180,7 +201,7 @@ const Kanban = ({
               key={board.id}
               className={cn(
                 'flex-1 mx-2 p-1.5 rounded-md min-w-[280px] max-w-[280px] min-h-full transition-colors duration-200',
-                isDragging ? 'border-2 border-dashed bg-transparent' : 'border-none',
+                isDragging ? 'border-1 border-dashed bg-transparent' : 'border-none',
                 board.isHovered
                   ? 'bg-blue-50 border-blue-300'
                   : cn('border-neutral-300', !isDragging ? 'bg-muted' : 'bg-transparent')
