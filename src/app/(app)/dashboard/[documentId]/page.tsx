@@ -14,7 +14,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import Toolbar from '@/components/toolbar'
 import Cover from '@/components/cover'
-import Kanban from '@/components/kanban'
+import Kanban from '@/components/kanban/board'
 
 interface DocumentIdPageParams {
   documentId: string
