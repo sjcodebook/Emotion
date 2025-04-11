@@ -88,51 +88,50 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
 
   return (
     <div className=''>
-      <div className='mb-10 mx-auto'>
+      <div className='mb-10'>
         <Cover url={document.data.coverImage ?? ''} />
-        <Toolbar
-          initialData={{
-            id: document.data.id,
-            title: document.data.title,
-            content: document.data.content,
-            coverImage: document.data.coverImage,
-            icon: document.data.icon,
-            parentDocumentId: document.data.parentDocumentId,
-          }}
-          preview={false}
-        />
-        <br />
-        {!document.data.type ? (
-          <div className='flex flex-row items-center justify-start h-full gap-4 ml-14'>
-            <Card
-              className='cursor-pointer transition-all hover:border-[2px] hover:border-gray-400 dark:hover:border-gray-600 p-0 w-50 overflow-hidden'
-              onClick={() => updateDocType('DOCUMENT')}>
-              <CardContent className='py-4'>
-                <h3 className='font-semibold'>Create an Editable Document</h3>
-              </CardContent>
-            </Card>
-            <Card
-              className='cursor-pointer transition-all hover:border-[2px] hover:border-gray-400 dark:hover:border-gray-600 p-0 w-50 overflow-hidden'
-              onClick={() => updateDocType('KANBAN')}>
-              <CardContent className='py-4'>
-                <h3 className='font-semibold'>Create a Kanban Board</h3>
-              </CardContent>
-            </Card>
-          </div>
-        ) : (
-          <>
-            {document.data.type === 'KANBAN' ? (
-              <Kanban />
-            ) : (
-              <Editor
-                onChange={(content) => {
-                  updateContent(content)
-                }}
-                initialContent={document.data.content}
-              />
-            )}
-          </>
-        )}
+        <div className='mx-2 md:mx-8'>
+          <Toolbar
+            initialData={{
+              id: document.data.id,
+              title: document.data.title,
+              content: document.data.content,
+              coverImage: document.data.coverImage,
+              icon: document.data.icon,
+              parentDocumentId: document.data.parentDocumentId,
+            }}
+            preview={false}
+          />
+          <br />
+          {!document.data.type ? (
+            <div className='flex flex-row items-center justify-start h-full gap-4 ml-14'>
+              <Card
+                className='cursor-pointer transition-all hover:border-[2px] hover:border-gray-400 dark:hover:border-gray-600 p-0 w-50 overflow-hidden'
+                onClick={() => updateDocType('DOCUMENT')}>
+                <CardContent className='py-4'>
+                  <h3 className='font-semibold'>Create an Editable Document</h3>
+                </CardContent>
+              </Card>
+              <Card
+                className='cursor-pointer transition-all hover:border-[2px] hover:border-gray-400 dark:hover:border-gray-600 p-0 w-50 overflow-hidden'
+                onClick={() => updateDocType('KANBAN')}>
+                <CardContent className='py-4'>
+                  <h3 className='font-semibold'>Create a Kanban Board</h3>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <>
+              {document.data.type === 'KANBAN' ? (
+                <div className='mx-8 md:mx-12'>
+                  <Kanban />
+                </div>
+              ) : (
+                <Editor onChange={updateContent} initialContent={document.data.content} />
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

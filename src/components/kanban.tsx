@@ -1,19 +1,16 @@
 'use cleint'
 
 import { useState, useCallback, useEffect } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { Button } from './ui/button'
 import { PlusIcon } from 'lucide-react'
-
-const boards = ['BACKLOG', 'IN PROGRESS', 'IN REVIEW', 'COMPLETED']
-
-const data = []
 
 const KanbanHeader = ({ board, taskCount }) => {
   return (
     <div className='flex items-center justify-between px-2 py-1.5'>
       <div className='flex items-center gap-x-2'>
-        <h2 className='text-sm font-medium'>{board}</h2>
+        <h2 className='text-sm font-medium'>{board.name}</h2>
         <div className='size-5 flex items-center justify-center rounded-md bg-neutral-200 text-xs text-neutral-700 font-medium'>
           {taskCount}
         </div>
@@ -37,60 +34,55 @@ const KanbanCard = ({ task }) => {
 }
 
 const Kanban = () => {
-  const [tasks, setTasks] = useState(() => {
-    const initialTasks = {
-      BACKLOG: [
+  const [boards, setBoards] = useState([
+    {
+      id: uuidv4(),
+      name: 'BACKLOG',
+      cards: [
         {
-          id: '78236',
-          title: 'Task 1',
-          description: 'Description for Task 1',
+          id: uuidv4(),
+          title: 'Do something awesome',
+          createdAt: new Date(),
         },
         {
-          id: '78237',
-          title: 'Task 2',
-          description: 'Description for Task 2',
-        },
-      ],
-      'IN PROGRESS': [
-        {
-          id: '78238',
-          title: 'Task 3',
-          description: 'Description for Task 3',
+          id: uuidv4(),
+          title: 'Do something awesome 2',
+          createdAt: new Date(),
         },
       ],
-      'IN REVIEW': [
+    },
+    {
+      id: uuidv4(),
+      name: 'TODO',
+      cards: [
         {
-          id: '78239',
-          title: 'Task 4',
-          description: 'Description for Task 4',
+          id: uuidv4(),
+          title: 'Do something awesome',
+          createdAt: new Date(),
+        },
+        {
+          id: uuidv4(),
+          title: 'Do something awesome 2',
+          createdAt: new Date(),
         },
       ],
-      COMPLETED: [
-        {
-          id: '78240',
-          title: 'Task 5',
-          description: 'Description for Task 5',
-        },
-      ],
-    }
-
-    return initialTasks
-  })
+    },
+  ])
 
   return (
     <DragDropContext onDragEnd={() => {}}>
       <div className='flex overflow-x-auto'>
-        {boards.map((board, index) => {
+        {boards.map((board) => {
           return (
-            <div key={board} className='flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[200px]'>
-              <KanbanHeader board={board} taskCount={tasks[board]?.length} />
-              <Droppable droppableId={board} key={board}>
+            <div key={board.id} className='flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[200px]'>
+              <KanbanHeader board={board} taskCount={board.cards.length} />
+              <Droppable droppableId={board.id} key={board.id}>
                 {(provided) => (
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                     className='min-h-[200px] py-1.5'>
-                    {tasks[board]?.map((task, index) => (
+                    {board.cards?.map((task, index) => (
                       <Draggable key={task.id} draggableId={task.id} index={index}>
                         {(provided) => (
                           <div

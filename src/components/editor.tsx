@@ -2,11 +2,11 @@
 
 import { useTheme } from 'next-themes'
 import '@blocknote/core/fonts/inter.css'
-import { BlockNoteView } from '@blocknote/mantine'
-import '@blocknote/mantine/style.css'
+import { BlockNoteView } from '@blocknote/shadcn'
 import { useCreateBlockNote } from '@blocknote/react'
 import { BlockNoteEditor, PartialBlock } from '@blocknote/core'
 
+import '@blocknote/shadcn/style.css'
 interface EditorProps {
   onChange: (value: string) => void
   initialContent?: string | null
@@ -20,7 +20,7 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
   })
 
   return (
-    <div className='blocknote-editor'>
+    <div className='blocknote-editor z-[9999999]'>
       <BlockNoteView
         editor={editor}
         theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
