@@ -26,15 +26,27 @@ interface BoardContent {
   }[]
 }
 
-const Kanban = ({ document }: { document: z.infer<typeof documentSchema> }) => {
+const Kanban = ({
+  document,
+  onChange,
+}: {
+  document: z.infer<typeof documentSchema>
+  onChange: (value: string) => void
+}) => {
   const [isDragging, setIsDragging] = useState(false)
   const [boards, setBoards] = useState<BoardContent[]>([])
 
   useEffect(() => {
-    if (!document || !document.content) return
+    if (!document || !document.content || boards.length > 0) return
     const parsedContent = JSON.parse(document.content)
     setBoards(parsedContent ?? [])
-  }, [document])
+  }, [boards, document])
+
+  useEffect(() => {
+    if (boards.length <= 0) return
+    const parsedContent = JSON.stringify(boards)
+    onChange(parsedContent)
+  }, [boards, onChange])
 
   const handleblockAdd = () => {
     setBoards((prev) => [
@@ -159,7 +171,7 @@ const Kanban = ({ document }: { document: z.infer<typeof documentSchema> }) => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragUpdate={handleDragUpdate}>
-      <div className='flex overflow-x-auto min-h-[350px] scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-4'>
+      <div className='flex overflow-x-auto min-h-screen scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-gray-300 scrollbar-track-transparent pb-4'>
         {boards.map((board) => {
           return (
             <div
