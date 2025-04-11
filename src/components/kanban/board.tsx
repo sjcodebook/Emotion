@@ -16,7 +16,11 @@ import KanbanHeader from './header'
 import KanbanCard from './card'
 import { toast } from 'sonner'
 
-import { createDocumentAction } from '../../app/(app)/actions'
+import {
+  createDocumentAction,
+  archiveDocumentsAction,
+  // getCurrentUserUnArchivedDocumentsAction,
+} from '../../app/(app)/actions'
 import { useQueryClient } from '@tanstack/react-query'
 import { QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 
@@ -43,6 +47,10 @@ const Kanban = ({
   const queryClient = useQueryClient()
   const [isDragging, setIsDragging] = useState(false)
   const [boards, setBoards] = useState<BoardContent[]>([])
+  // const { data: allDocuments } = useServerActionQuery(getCurrentUserUnArchivedDocumentsAction, {
+  //   input: undefined,
+  //   queryKey: QueryKeyFactory.getCurrentUserUnArchivedDocumentsAction(),
+  // })
 
   useEffect(() => {
     if (!document || !document.content || boards.length > 0) return
@@ -107,7 +115,22 @@ const Kanban = ({
     })
   }
 
-  const handleCardRemove = (boardId: string, taskId: string) => {
+  const handleCardRemove = async (
+    e: React.MouseEvent<HTMLDivElement>,
+    boardId: string,
+    taskId: string
+  ) => {
+    e.stopPropagation()
+    toast.loading('Deleting task...')
+    const [data, err] = await archiveDocumentsAction({
+      parentDocumentId: taskId,
+    })
+    toast.dismiss()
+    if (err || data?.error) {
+      toast.error('Failed to delete task. Please try again.')
+      return
+    }
+    toast.success('Task deleted successfully!')
     setBoards((prev) =>
       prev.map((board) => {
         if (board.id === boardId) {
@@ -119,6 +142,12 @@ const Kanban = ({
         return board
       })
     )
+    await queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getCurrentUserDocumentByParentDocumentIdAction(document.id),
+    })
+    await queryClient.refetchQueries({
+      queryKey: QueryKeyFactory.getCurrentUserAllDocumentsAction(),
+    })
   }
 
   const handleDragStart = () => {
