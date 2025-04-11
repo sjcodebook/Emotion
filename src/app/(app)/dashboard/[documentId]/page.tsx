@@ -124,7 +124,12 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
             <>
               {document.data.type === 'KANBAN' ? (
                 <div className='mx-8 md:mx-12'>
-                  <Kanban />
+                  <Kanban
+                    document={{
+                      id: document.data.id,
+                      content: document.data.content,
+                    }}
+                  />
                 </div>
               ) : (
                 <Editor onChange={updateContent} initialContent={document.data.content} />

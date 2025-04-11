@@ -1,9 +1,12 @@
-'use cleint'
+'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { PlusIcon } from 'lucide-react'
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
+import { z } from 'zod'
+import { DragDropContext, Droppable, Draggable, DropResult, DragUpdate } from '@hello-pangea/dnd'
+
+import { documentSchema } from '@/zod-schemas/documents'
 
 import { cn } from '@/lib/utils'
 
@@ -12,42 +15,26 @@ import { Button } from '@/components/ui/button'
 import KanbanHeader from './header'
 import KanbanCard from './card'
 
-const Kanban = () => {
+interface BoardContent {
+  id: string
+  name: string
+  isHovered?: boolean
+  cards: {
+    id: string
+    title: string
+    createdAt: Date
+  }[]
+}
+
+const Kanban = ({ document }: { document: z.infer<typeof documentSchema> }) => {
   const [isDragging, setIsDragging] = useState(false)
-  const [boards, setBoards] = useState([
-    {
-      id: uuidv4(),
-      name: 'BACKLOG',
-      cards: [
-        {
-          id: uuidv4(),
-          title: 'Write next 3rd to 10th days emails for hoot and hustle subscribers',
-          createdAt: new Date(),
-        },
-        {
-          id: uuidv4(),
-          title: 'Do something awesome 2',
-          createdAt: new Date(),
-        },
-      ],
-    },
-    {
-      id: uuidv4(),
-      name: 'TODO',
-      cards: [
-        {
-          id: uuidv4(),
-          title: 'Do something awesome',
-          createdAt: new Date(),
-        },
-        {
-          id: uuidv4(),
-          title: 'Do something awesome 2',
-          createdAt: new Date(),
-        },
-      ],
-    },
-  ])
+  const [boards, setBoards] = useState<BoardContent[]>([])
+
+  useEffect(() => {
+    if (!document || !document.content) return
+    const parsedContent = JSON.parse(document.content)
+    setBoards(parsedContent ?? [])
+  }, [document])
 
   const handleblockAdd = () => {
     setBoards((prev) => [
@@ -60,11 +47,11 @@ const Kanban = () => {
     ])
   }
 
-  const handleBlockRemove = (id) => {
+  const handleBlockRemove = (id: string) => {
     setBoards((prev) => prev.filter((board) => board.id !== id))
   }
 
-  const handleCardAdd = (boardId) => {
+  const handleCardAdd = (boardId: string) => {
     setBoards((prev) =>
       prev.map((board) => {
         if (board.id === boardId) {
@@ -85,7 +72,7 @@ const Kanban = () => {
     )
   }
 
-  const handleCardRemove = (boardId, taskId) => {
+  const handleCardRemove = (boardId: string, taskId: string) => {
     setBoards((prev) =>
       prev.map((board) => {
         if (board.id === boardId) {
@@ -154,7 +141,7 @@ const Kanban = () => {
     })
   }
 
-  const handleDragUpdate = (update) => {
+  const handleDragUpdate = (update: DragUpdate) => {
     const { destination } = update
 
     setBoards((prevBoards) =>
