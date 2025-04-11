@@ -144,8 +144,56 @@ const Kanban = () => {
     )
   }
 
+  const handleDragEnd = (result: DropResult) => {
+    const { source, destination } = result
+
+    // If there's no destination, do nothing
+    if (!destination) return
+
+    // If the source and destination are the same, do nothing
+    if (source.droppableId === destination.droppableId && source.index === destination.index) {
+      return
+    }
+
+    setBoards((prevBoards) => {
+      const sourceBoardIndex = prevBoards.findIndex((board) => board.id === source.droppableId)
+      const destinationBoardIndex = prevBoards.findIndex(
+        (board) => board.id === destination.droppableId
+      )
+
+      const sourceBoard = prevBoards[sourceBoardIndex]
+      const destinationBoard = prevBoards[destinationBoardIndex]
+
+      const sourceCards = [...sourceBoard.cards]
+      const [movedCard] = sourceCards.splice(source.index, 1)
+
+      if (sourceBoardIndex === destinationBoardIndex) {
+        // Moving within the same block
+        sourceCards.splice(destination.index, 0, movedCard)
+        const updatedBoard = { ...sourceBoard, cards: sourceCards }
+        return prevBoards.map((board, index) => (index === sourceBoardIndex ? updatedBoard : board))
+      } else {
+        // Moving to a different block
+        const destinationCards = [...destinationBoard.cards]
+        destinationCards.splice(destination.index, 0, movedCard)
+
+        const updatedSourceBoard = { ...sourceBoard, cards: sourceCards }
+        const updatedDestinationBoard = {
+          ...destinationBoard,
+          cards: destinationCards,
+        }
+
+        return prevBoards.map((board, index) => {
+          if (index === sourceBoardIndex) return updatedSourceBoard
+          if (index === destinationBoardIndex) return updatedDestinationBoard
+          return board
+        })
+      }
+    })
+  }
+
   return (
-    <DragDropContext onDragEnd={() => {}}>
+    <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => {}}>
       <div className='flex overflow-x-auto min-h-[350px] scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-4'>
         {boards.map((board) => {
           return (
