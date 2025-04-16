@@ -21,11 +21,11 @@ interface PublishProps {
 
 const Publish = ({ initialData }: PublishProps) => {
   const [copied, setCopied] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting] = useState(false)
   const queryClient = useQueryClient()
 
   const origin = useOrigin()
-  const update = () => {}
+  // const update = () => {}
 
   const url = `${origin}/preview/${initialData?.id}`
 
