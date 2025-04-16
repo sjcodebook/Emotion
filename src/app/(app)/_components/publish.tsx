@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Check, Copy, Globe } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { documentSchema } from '@/zod-schemas/documents'
 
@@ -21,6 +22,7 @@ interface PublishProps {
 const Publish = ({ initialData }: PublishProps) => {
   const [copied, setCopied] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const queryClient = useQueryClient()
 
   const origin = useOrigin()
   const update = () => {}
@@ -31,18 +33,22 @@ const Publish = ({ initialData }: PublishProps) => {
     try {
       toast.loading('Publishing document...')
       const [data, err] = await updateDocumentAction({
+        id: initialData?.id,
         isPublished: true,
         parentDocumentId: initialData?.id,
       })
       toast.dismiss()
+      await queryClient.refetchQueries()
 
       if (err || data?.error) {
+        console.error('Error publishing document:', data?.error)
         toast.error('Failed to publish document. Please try again.')
         return
       }
 
       toast.success('Document published successfully!')
     } catch (error) {
+      console.error('Error publishing document:', error)
       toast.dismiss()
       console.error('Error publishing document:', error)
       toast.error('Failed to publish document. Please try again.')

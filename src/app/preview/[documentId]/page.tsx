@@ -3,15 +3,18 @@
 import { use, useCallback, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { useServerAction } from 'zsa-react'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { getDocumentByIdAction } from '../../(app)/actions'
 import { updateDocumentAction } from '../../(app)/actions'
 
 import { useServerActionQuery, QueryKeyFactory } from '@/hooks/use-server-action-hooks'
 
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import Toolbar from '@/components/toolbar'
 import Cover from '@/components/cover'
-import { Skeleton } from '@/components/ui/skeleton'
+import Kanban from '@/components/kanban/board'
 
 interface DocumentIdPageParams {
   documentId: string
@@ -25,6 +28,7 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
       }),
     []
   )
+  const queryClient = useQueryClient()
   const { documentId } = use(params)
   const { isLoading, data: document } = useServerActionQuery(getDocumentByIdAction, {
     input: {
@@ -35,14 +39,27 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
 
   const { execute: updateDoc } = useServerAction(updateDocumentAction)
 
-  const updateData = useCallback(
-    async (content: any) => {
+  const updateContent = useCallback(
+    async (content: string) => {
       await updateDoc({
         id: documentId,
         content: content,
       })
     },
     [documentId, updateDoc]
+  )
+
+  const updateDocType = useCallback(
+    async (type: 'KANBAN' | 'DOCUMENT') => {
+      await updateDoc({
+        id: documentId,
+        type,
+      })
+      await queryClient.refetchQueries({
+        queryKey: QueryKeyFactory.getDocumentByIdAction(documentId),
+      })
+    },
+    [documentId, queryClient, updateDoc]
   )
 
   if (isLoading) {
@@ -62,34 +79,69 @@ const DocumentIdPage = ({ params }: { params: Promise<DocumentIdPageParams> }) =
   }
 
   if (document?.error) {
-    return <div>Something went wrong</div>
+    return <div className='h-full flex justify-center items-center'>{document?.message}</div>
   }
 
   if (!document?.data) {
-    return <div>Document not found</div>
+    return <div className='flex justify-center items-center'>Document not found</div>
   }
 
   return (
-    <div className='pb-40'>
-      <div className='md:max-w-3xl lg:max-w-4xl mx-auto'>
-        <Cover preview url={document.data.coverImage ?? ''} />
-        <Toolbar
-          initialData={{
-            id: document.data.id,
-            title: document.data.title,
-            content: document.data.content,
-            coverImage: document.data.coverImage,
-            icon: document.data.icon,
-          }}
-          preview
-        />
-        <Editor
-          editable={false}
-          onChange={(content) => {
-            updateData(content)
-          }}
-          initialContent={document.data.content}
-        />
+    <div className=''>
+      <div className='mb-10'>
+        <Cover url={document.data.coverImage ?? ''} preview={true} />
+        <div className='mx-2 md:mx-8'>
+          <Toolbar
+            initialData={{
+              id: document.data.id,
+              title: document.data.title,
+              content: document.data.content,
+              coverImage: document.data.coverImage,
+              icon: document.data.icon,
+              parentDocumentId: document.data.parentDocumentId,
+            }}
+            preview={true}
+          />
+          <br />
+          {!document.data.type ? (
+            <div className='flex flex-row items-center justify-start h-full gap-4 ml-14'>
+              <Card
+                className='cursor-pointer transition-all hover:border-[2px] hover:border-gray-400 dark:hover:border-gray-600 p-0 w-50 overflow-hidden'
+                onClick={() => updateDocType('DOCUMENT')}>
+                <CardContent className='py-4'>
+                  <h3 className='font-semibold'>Create an Editable Document</h3>
+                </CardContent>
+              </Card>
+              <Card
+                className='cursor-pointer transition-all hover:border-[2px] hover:border-gray-400 dark:hover:border-gray-600 p-0 w-50 overflow-hidden'
+                onClick={() => updateDocType('KANBAN')}>
+                <CardContent className='py-4'>
+                  <h3 className='font-semibold'>Create a Kanban Board</h3>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <>
+              {document.data.type === 'KANBAN' ? (
+                <div className='mx-8 md:mx-12'>
+                  <Kanban
+                    onChange={updateContent}
+                    document={{
+                      id: document.data.id,
+                      content: document.data.content,
+                    }}
+                  />
+                </div>
+              ) : (
+                <Editor
+                  onChange={updateContent}
+                  initialContent={document.data.content}
+                  editable={false}
+                />
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   )
